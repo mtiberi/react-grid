@@ -35,7 +35,8 @@ const DataColumn = props => {
     const startDrag = columnIndex => event => {
         setDragObject({
             columnIndex,
-            pageX: event.pageX
+            pageX: event.pageX,
+            currentX: event.pageX,
         }, event)
     }
 
@@ -46,6 +47,7 @@ const DataColumn = props => {
     const styleHeight = {
         height: rowHeight + 'px',
     }
+
     const renderValue = value => {
 
         const { rowIndex, text } = value
@@ -69,9 +71,8 @@ const DataColumn = props => {
             ? sortDescending ? ' \u21f1' : ' \u21f2'
             : null
 
-
     const renderHead = (text, colIndex) =>
-        <div className="react-grid head" style={{ visibility: topVisibility }} >
+        <div className="react-grid head" style={{ visibility: topVisibility, height: styleHeight.height }} >
             <div
                 className="react-grid head-text"
                 onClick={clickColumn(colIndex)} >
@@ -105,7 +106,7 @@ class DataGrid extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         console.log('nextProps', nextProps)
-        
+
         const {
             sortColumn,
             sortDescending,
@@ -136,7 +137,6 @@ class DataGrid extends React.Component {
             columnResize = []
         } = this.state
 
-
         const dataChanged = !(
             head === this.cache.head &&
             columns === this.cache.columns &&
@@ -146,17 +146,7 @@ class DataGrid extends React.Component {
             transform === this.cache.transform
         )
 
-
         if (dataChanged) {
-
-            this.cache = {
-                head,
-                columns,
-                sortColumn,
-                sortDescending,
-                filter,
-                transform,
-            }
 
             const columnValues = head.map(column =>
                 transform[column.id]
@@ -216,13 +206,24 @@ class DataGrid extends React.Component {
                 setSort(colIndex, false)
         }
 
-        const setDragObject = (obj, event) => {
-            this.dragObject = obj
-            if (event)
-                event.dataTransfer
-                    .setDragImage(this.invisible, 0, 0)
+        const updateDrag = () => {
+            if (this.dragObject) {
+                const { columnIndex = -1, pageX, currentX } = this.dragObject
+                if (columnIndex >= 0) {
+                    dragResize(columnIndex, pageX, currentX)
+                    setTimeout(updateDrag, 0.25)
+                }
+            }
         }
 
+        const setDragObject = (obj, event) => {
+            this.dragObject = obj
+            if (obj) {
+                event.dataTransfer
+                    .setDragImage(this.invisible, 0, 0)
+                setTimeout(updateDrag, 0.25)
+            }
+        }
 
         const map_head = (column, colIndex) => {
             const props = {
@@ -253,6 +254,7 @@ class DataGrid extends React.Component {
                 title: column.title,
                 values: [],
                 width: column.width + columnResize[colIndex],
+                rowHeight,
                 sortColumn,
                 sortDescending,
 
@@ -276,20 +278,21 @@ class DataGrid extends React.Component {
         }
 
         const dragOver = event => {
-            const { columnIndex = -1, pageX } = this.dragObject
-            if (columnIndex >= 0) {
-                event.preventDefault()
-                dragResize(columnIndex, pageX, event.pageX)
+            if (this.dragObject) {
+                this.dragObject = {
+                    ...this.dragObject,
+                    currentX: event.pageX
+                }
             }
         }
-        const dragStop = event =>
-            setDragObject({})
 
+        const dragStop = event =>
+            setDragObject(null)
 
         return <div
             style={{ position: 'relative' }}
             onDragOver={dragOver}
-            onDrop={dragStop} >
+            onDragEnd={dragStop} >
             <img ref={x => this.invisible = x} style={{ visibility: 'hidden' }} />
             <div
                 className="react-grid top"

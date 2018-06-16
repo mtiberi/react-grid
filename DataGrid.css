@@ -31,11 +31,12 @@
     font-weight: normal;
     display: flex;
     flex-direction: row;
+    padding: 0px;
 }
 
 .react-grid.head-text {
     flex-grow: 1;
-    padding: 4px;
+    padding-left: 4px;
     font-weight: bold;
     overflow:hidden;
 }
