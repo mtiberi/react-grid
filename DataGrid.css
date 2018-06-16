@@ -1,0 +1,43 @@
+.react-grid {
+    flex-grow: 1;
+    background-color: green;
+    border: 1px solid rgba(0, 0, 0, .4);
+}
+
+.react-grid.head {
+}
+
+.react-grid.head-cell::selection {
+    background-color: silver;
+    color: blue; 
+}
+
+.react-grid.head-cell {
+    background-color: silver;
+    color: blue; 
+
+}
+
+
+.react-grid.body {
+    
+}
+
+.react-grid.body-row {
+    
+}
+
+.react-grid.body-row.selected {
+    font-weight: bolder;
+    background: red;
+}
+
+.react-grid.body-cell {
+    background-color: white;
+}
+
+.react-grid.body-cell {
+    
+}
+
+
