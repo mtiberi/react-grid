@@ -57,7 +57,6 @@ const DataColumn = props => {
             {text} {sortSymbol(colIndex)}
         </div>
 
-
     return <div
         className="react-grid column"
         style={styleWidth}>
@@ -74,6 +73,7 @@ class DataGrid extends React.Component {
             columns = {},
             transform = {},
             filter,
+            setSelectedRowIndex,
         } = this.props;
 
         const {
@@ -87,6 +87,8 @@ class DataGrid extends React.Component {
 
         const selectRow = (rowIndex) => {
             this.setState({ selectedRowIndex: rowIndex })
+            if (setSelectedRowIndex)
+                setSelectedRowIndex(rowIndex)
         }
 
         const selectColumn = colIndex => {
@@ -161,7 +163,7 @@ class DataGrid extends React.Component {
         }
 
         return <div style={{ position: 'relative' }}>
-            <div className="react-grid top">
+            <div className="react-grid top" style={{ position: 'absolute', zIndex: 1 }}>
                 {head.map(map_head_top)}
             </div>
             <div className="react-grid grid">

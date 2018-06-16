@@ -8,26 +8,29 @@
 }
 
 .react-grid.top {
-    position: absolute;
-    z-index: 1;
+    top:1px;
+    left:1px;
     display: flex;
     flex-direction: row;
-    background-color: green;
 }
 
 .react-grid.column {
-    background-color: red;
-    border: 1px solid rgba(0, 0, 0, .4);
+    background-color: white;
 }
 
 .react-grid.head {
     background-color: silver;
-    border: 1px solid rgba(0, 0, 0, .4);
-}
+    border-left: 1px solid rgba(0, 0, 0, .4);
+    border-bottom: 1px solid rgba(0, 0, 0, .4);
+    padding-left: 4px;
+    overflow:hidden;}
 
 .react-grid.cell {
     background-color: white;
-    border: 1px solid rgba(0, 0, 0, .4);
+    border-left: 1px solid rgba(0, 0, 0, .4);
+    border-bottom: 1px solid rgba(0, 0, 0, .4);
+    padding-left: 4px;
+    overflow:hidden;
 }
 
 .react-grid.cell.selected {
