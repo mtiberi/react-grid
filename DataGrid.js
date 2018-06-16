@@ -1,12 +1,76 @@
 // https://github.com/mtiberi/react-grid
 // Copyright (c) 2018 mtiberi
-// MIT License
+// License: MIT
+
+const DataColumn = props => {
+
+    const {
+        colIndex,
+        title = 'no title',
+        values = [],
+        width = 100,
+        sortColumn,
+        sortDescending,
+        selectedRowIndex,
+
+        selectColumn,
+        selectRow,
+    } = props;
+
+    const clickColumn = columnIndex => event => {
+        event.stopPropagation()
+        selectColumn(columnIndex)
+    }
+
+    const clickRow = rowIndex => event => {
+        event.stopPropagation()
+        selectRow(rowIndex)
+    }
+
+    const styleWidth = {
+        width: width + 'px',
+    }
+
+    const renderValue = value => {
+
+        const { rowIndex, text } = value
+
+        const maybeSelected = rowIndex === selectedRowIndex
+            ? " selected"
+            : ""
+
+        return <div className={"react-grid cell" + maybeSelected}
+            key={rowIndex}
+            onClick={clickRow(rowIndex)}>
+            {text}
+        </div>
+    }
+
+    const sortSymbol = colIndex =>
+        sortColumn === colIndex
+            ? sortDescending ? ' \u2191' : ' \u2193'
+            : null
+
+    const renderHead = (text, colIndex) =>
+        <div className="react-grid head"
+            onClick={clickColumn(colIndex)}>
+            {text} {sortSymbol(colIndex)}
+        </div>
+
+
+    return <div
+        className="react-grid column"
+        style={styleWidth}>
+        {renderHead(title, colIndex)}
+        {values.map(renderValue)}
+    </div>
+}
 
 class DataGrid extends React.Component {
 
     render() {
         const {
-            header = [],
+            head = [],
             columns = {},
             transform = {},
             filter,
@@ -21,16 +85,18 @@ class DataGrid extends React.Component {
         const setSort = (sortColumn, sortDescending) =>
             this.setState({ sortColumn, sortDescending })
 
-        const setSelectedRowIndex = (selectedRowIndex) =>
-            this.setState({ selectedRowIndex })
+        const selectRow = (rowIndex) => {
+            this.setState({ selectedRowIndex: rowIndex })
+        }
 
-        const filterFunc = columns._filter
-            ? filter
-                ? rowIndex => columns._filter[rowIndex].includes(filter)
-                : () => true
-            : () => true
+        const selectColumn = colIndex => {
+            if (colIndex === sortColumn)
+                setSort(colIndex, !sortDescending)
+            else
+                setSort(colIndex, false)
+        }
 
-        const columnValues = header.map(column =>
+        const columnValues = head.map(column =>
             transform[column.id]
                 ? columns[column.id].map(transform[column.id])
                 : columns[column.id]
@@ -56,63 +122,51 @@ class DataGrid extends React.Component {
             return result
         }
 
-        const sortMap = getSortMap();
+        const sortMap = columns._filter && filter
+            ? getSortMap().filter(rowIndex => columns._filter[rowIndex].includes(filter))
+            : getSortMap()
 
-        const clickColumn = colIndex => event => {
+        const map_head = (column, colIndex) => {
+            const props = {
+                colIndex,
+                title: column.title,
+                values: sortMap.map(rowIndex =>
+                    ({
+                        rowIndex,
+                        text: columnValues[colIndex][rowIndex]
+                    })),
+                width: column.width,
+                sortColumn,
+                sortDescending,
+                selectedRowIndex,
 
-            event.stopPropagation()
-            if (colIndex === sortColumn)
-                setSort(colIndex, !sortDescending)
-            else
-                setSort(colIndex, false)
-
+                selectColumn,
+                selectRow,
+            }
+            return <DataColumn key={colIndex} {...props} />
         }
 
-        const clickRow = rowIndex => event => {
-            event.stopPropagation()
-            if (rowIndex !== selectedRowIndex)
-                setSelectedRowIndex(rowIndex)
+        const map_head_top = (column, colIndex) => {
+            const props = {
+                colIndex,
+                title: column.title,
+                values: [],
+                width: column.width,
+                sortColumn,
+                sortDescending,
+
+                selectColumn,
+            }
+            return <DataColumn key={colIndex} {...props} />
         }
 
-        const map_cells = rowIndex => (column, colIndex) => {
-            const maybeWidth = column.width ? { width: column.width + 'px' } : null
-
-            return <td key={colIndex} className="react-grid body-cell" style={maybeWidth}>
-                {columnValues[colIndex][rowIndex]}
-            </td>
-        }
-
-        const map_rows = rowIndex => {
-            const maybeSelected = (rowIndex === selectedRowIndex) ? "selected" : ""
-            return <tr key={rowIndex} className={"react-grid body-row " + maybeSelected} onClick={clickRow(rowIndex)}>
-                {header.map(map_cells(rowIndex))}
-            </tr>
-        }
-
-        const sortSymbol = colIndex =>
-            sortColumn !== colIndex
-                ? null
-                : sortDescending ? ' \u2191' : ' \u2193'
-
-        const map_header = (column, colIndex) => {
-
-            const maybeWidth = column.width ? { width: column.width + 'px' } : null
-
-            return <th key={colIndex} className="react-grid head-cell" style={maybeWidth} onClick={clickColumn(colIndex)}>
-                {column.title}
-                {sortSymbol(colIndex)}
-            </th>
-        }
-
-        return <div className="react-grid">
-            <table>
-                <thead className="react-grid head">
-                    <tr>{header.map(map_header)}</tr>
-                </thead>
-                <tbody className="react-grid body">
-                    {sortMap.filter(filterFunc).map(map_rows)}
-                </tbody>
-            </table>
+        return <div style={{ position: 'relative' }}>
+            <div className="react-grid top">
+                {head.map(map_head_top)}
+            </div>
+            <div className="react-grid grid">
+                {head.map(map_head)}
+            </div>
         </div>
     }
 }
