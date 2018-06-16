@@ -15,7 +15,9 @@ const DataColumn = props => {
 
         selectColumn,
         selectRow,
+        setDragObject,
     } = props;
+
 
     const clickColumn = columnIndex => event => {
         event.stopPropagation()
@@ -25,6 +27,13 @@ const DataColumn = props => {
     const clickRow = rowIndex => event => {
         event.stopPropagation()
         selectRow(rowIndex)
+    }
+
+    const startDrag = columnIndex => event => {
+        setDragObject({
+            columnIndex,
+            pageX: event.pageX
+        }, event)
     }
 
     const styleWidth = {
@@ -39,22 +48,36 @@ const DataColumn = props => {
             ? " selected"
             : ""
 
-        return <div className={"react-grid cell" + maybeSelected}
+        return <div
+            className={"react-grid cell" + maybeSelected}
             key={rowIndex}
-            onClick={clickRow(rowIndex)}>
+            onClick={clickRow(rowIndex)}
+        >
             {text}
         </div>
     }
 
     const sortSymbol = colIndex =>
         sortColumn === colIndex
-            ? sortDescending ? ' \u2191' : ' \u2193'
+            ? sortDescending ? ' \u21f1' : ' \u21f2'
             : null
 
+
     const renderHead = (text, colIndex) =>
-        <div className="react-grid head"
-            onClick={clickColumn(colIndex)}>
-            {text} {sortSymbol(colIndex)}
+        <div className="react-grid head">
+            <div
+                className="react-grid head-text"
+                onClick={clickColumn(colIndex)}
+            >
+                {text}
+            </div>
+            <div
+                className="react-grid grip"
+                draggable={true}
+                onDragStart={startDrag(colIndex)}
+            >
+                <div className="react-grid sort-symbol">{sortSymbol(colIndex)}</div>
+            </div>
         </div>
 
     return <div
@@ -67,6 +90,14 @@ const DataColumn = props => {
 
 class DataGrid extends React.Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            columnResize: (props.head || []).map(x => 0)
+        }
+        this.cache = {}
+    }
+
     render() {
         const {
             head = [],
@@ -74,13 +105,68 @@ class DataGrid extends React.Component {
             transform = {},
             filter,
             setSelectedRowIndex,
-        } = this.props;
+        } = this.props
 
         const {
             sortColumn = 0,
             sortDescending = false,
             selectedRowIndex = 1,
-        } = this.state || {}
+            columnResize = []
+        } = this.state
+
+        
+        const dataChanged = !(
+            head === this.cache.head &&
+            columns === this.cache.columns &&
+            sortColumn === this.cache.sortColumn &&
+            sortDescending === this.cache.sortDescending &&
+            filter === this.cache.filter &&
+            transform === this.cache.transform
+        )
+
+        this.cache = {
+            head,
+            columns,
+            sortColumn,
+            sortDescending,
+            filter,
+            transform,
+        }
+
+        if (dataChanged) {
+            this.columnValues = head.map(column =>
+                transform[column.id]
+                    ? columns[column.id].map(transform[column.id])
+                    : columns[column.id]
+            )
+
+            this.sortMap = []
+
+            if (this.columnValues.length !== 0) {
+
+                const values = this.columnValues[sortColumn]
+
+                let result = values.map((x, i) => i)
+
+                const compare = (a, b) => a > b ? 1 : a === b ? 0 : -1
+
+                result.sort((a, b) =>
+                    compare(values[a], values[b]))
+
+                if (sortDescending)
+                    result.reverse()
+
+                if (columns._filter && filter)
+                    result = result.filter(rowIndex =>
+                        columns._filter[rowIndex].includes(filter))
+
+                this.sortMap = result
+            }
+
+        }
+
+        const sortMap = this.sortMap
+        const columnValues = this.columnValues
 
         const setSort = (sortColumn, sortDescending) =>
             this.setState({ sortColumn, sortDescending })
@@ -98,35 +184,13 @@ class DataGrid extends React.Component {
                 setSort(colIndex, false)
         }
 
-        const columnValues = head.map(column =>
-            transform[column.id]
-                ? columns[column.id].map(transform[column.id])
-                : columns[column.id]
-        )
-
-        const getSortMap = () => {
-
-            if (columnValues.length === 0)
-                return []
-
-            const values = columnValues[sortColumn]
-
-            let result = values.map((x, i) => i)
-
-            const compare = (a, b) => a > b ? 1 : a === b ? 0 : -1
-
-            result.sort((a, b) =>
-                compare(values[a], values[b]))
-
-            if (sortDescending)
-                result.reverse()
-
-            return result
+        const setDragObject = (obj, event) => {
+            this.dragObject = obj
+            if (event)
+                event.dataTransfer
+                    .setDragImage(this.invisible, 0, 0)
         }
 
-        const sortMap = columns._filter && filter
-            ? getSortMap().filter(rowIndex => columns._filter[rowIndex].includes(filter))
-            : getSortMap()
 
         const map_head = (column, colIndex) => {
             const props = {
@@ -137,13 +201,14 @@ class DataGrid extends React.Component {
                         rowIndex,
                         text: columnValues[colIndex][rowIndex]
                     })),
-                width: column.width,
+                width: column.width + columnResize[colIndex],
                 sortColumn,
                 sortDescending,
                 selectedRowIndex,
 
                 selectColumn,
                 selectRow,
+                setDragObject,
             }
             return <DataColumn key={colIndex} {...props} />
         }
@@ -153,20 +218,55 @@ class DataGrid extends React.Component {
                 colIndex,
                 title: column.title,
                 values: [],
-                width: column.width,
+                width: column.width + columnResize[colIndex],
                 sortColumn,
                 sortDescending,
 
                 selectColumn,
+                setDragObject,
             }
             return <DataColumn key={colIndex} {...props} />
         }
 
-        return <div style={{ position: 'relative' }}>
-            <div className="react-grid top" style={{ position: 'absolute', zIndex: 1 }}>
+        const dragResize = (columnIndex, start, current) => {
+            let delta = current - start
+
+            const targetSize = head[columnIndex].width + delta
+            if (targetSize < 32)
+                delta = 32 - head[columnIndex].width
+
+            let resize = columnResize.slice()
+            resize[columnIndex] = delta
+
+            this.setState({ columnResize: resize })
+        }
+
+        const dragOver = event => {
+            const { columnIndex = -1, pageX } = this.dragObject
+            if (columnIndex >= 0) {
+                event.preventDefault()
+                dragResize(columnIndex, pageX, event.pageX)
+            }
+        }
+        const dragStop = event =>
+            setDragObject({})
+
+
+        return <div
+            style={{ position: 'relative' }}
+            onDragOver={dragOver}
+            onDrop={dragStop}
+        >
+            <img ref={x => this.invisible = x} style={{ visibility: 'hidden' }} />
+            <div
+                className="react-grid top"
+                style={{ position: 'absolute', zIndex: 1 }}
+            >
                 {head.map(map_head_top)}
             </div>
-            <div className="react-grid grid">
+            <div
+                className="react-grid grid"
+            >
                 {head.map(map_head)}
             </div>
         </div>

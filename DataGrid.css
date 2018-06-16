@@ -1,10 +1,13 @@
 .react-grid.grid {
     display: flex;
     flex-direction: row;
-    background-color: green;
     border: 1px solid rgba(0, 0, 0, .4);
     height: 200px;
     overflow: auto;
+    border-collapse: separate;
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+    padding: 0px;
 }
 
 .react-grid.top {
@@ -18,22 +21,53 @@
     background-color: white;
 }
 
+
+
 .react-grid.head {
-    background-color: silver;
-    border-left: 1px solid rgba(0, 0, 0, .4);
-    border-bottom: 1px solid rgba(0, 0, 0, .4);
-    padding-left: 4px;
-    overflow:hidden;}
+    background-color: #d0d0d0;
+    border-left: 1px solid white;
+    border-right: 1px solid rgba(0, 0, 0, .2);
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+    font-weight: normal;
+    display: flex;
+    flex-direction: row;
+}
+
+.react-grid.head-text {
+    flex-grow: 1;
+    padding: 4px;
+    font-weight: bold;
+    overflow:hidden;
+}
+
+.react-grid.sort-symbol {
+    background-color: white;
+    float: bottom;
+}
+
+.react-grid.grip {
+    flex-shrink: 0;
+    background-color: #c0c0c0;
+    color: blue;
+    min-width: 8px;
+    cursor: ew-resize;
+}
 
 .react-grid.cell {
-    background-color: white;
-    border-left: 1px solid rgba(0, 0, 0, .4);
-    border-bottom: 1px solid rgba(0, 0, 0, .4);
+    border-left: 1px solid white;
+    border-right: 1px solid rgba(0, 0, 0, .2);
     padding-left: 4px;
     overflow:hidden;
 }
 
 .react-grid.cell.selected {
-    background-color: red;
-    border: 1px solid rgba(0, 0, 0, .4);
+    background-color: #ccf;
+}
+
+.react-grid.cell.selected:nth-child(odd):not(.selected) {
+    background-color: white;
+}
+
+.react-grid.cell:nth-child(even):not(.selected) {
+    background-color: #e9e9ff
 }
