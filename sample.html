@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <title>react-grid sample</title>
+    <script src="https://unpkg.com/react@16.2.0/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@16.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone/babel.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="DataGrid.css">
+    <script type="text/babel" src="DataGrid.js"></script>
+</head>
+
+<body>
+    <div id='app'></div>
+    <script type="text/babel">
+
+        const setSelectedRowIndex = (rowIndex) => 
+            console.log('selected row', rowIndex)
+            
+        const griddata = {
+            sortColumn: 0,
+            sortDescending: false,
+            selectedRowIndex: -1,
+            rowHeight: 24,
+            head: [
+                { id: 'a', title: 'ABCABCABCABCABCABC', width: 100 },
+                { id: 'b', title: 'BCABCABCABCABCABCA', width: 100 },
+                { id: 'c', title: 'CABCABCABCABCABCAB', width: 100 },
+            ],
+            columns: {
+                a: ['a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c'],
+                b: ['b', 'c', 'a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c', 'a'],
+                c: ['c', 'a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c', 'a', 'b'],
+            },
+            setSelectedRowIndex,
+        }
+
+
+        var domElement = document.getElementById("app");
+        ReactDOM.render(
+            <DataGrid {...griddata} />,
+            domElement);
+
+     
+     </script>
+</body>
+
+</html>

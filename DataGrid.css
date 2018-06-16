@@ -8,6 +8,8 @@
     width: 100%;
     border-bottom: 1px solid rgba(0, 0, 0, .2);
     padding: 0px;
+    margin: 0px;
+    font-family: sans-serif;
 }
 
 .react-grid.top {
@@ -20,8 +22,6 @@
 .react-grid.column {
     background-color: white;
 }
-
-
 
 .react-grid.head {
     background-color: #d0d0d0;
@@ -41,15 +41,14 @@
 }
 
 .react-grid.sort-symbol {
-    background-color: white;
-    float: bottom;
+    cursor: ew-resize;
 }
 
 .react-grid.grip {
     flex-shrink: 0;
-    background-color: #c0c0c0;
-    color: blue;
-    min-width: 8px;
+    color: #606060;
+    border-left: 1px dotted #909090;
+    min-width: 4px;
     cursor: ew-resize;
 }
 

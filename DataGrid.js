@@ -9,9 +9,11 @@ const DataColumn = props => {
         title = 'no title',
         values = [],
         width = 100,
+        rowHeight = 16,
         sortColumn,
         sortDescending,
         selectedRowIndex,
+        topVisibility,
 
         selectColumn,
         selectRow,
@@ -26,7 +28,8 @@ const DataColumn = props => {
 
     const clickRow = rowIndex => event => {
         event.stopPropagation()
-        selectRow(rowIndex)
+        if (rowIndex != selectedRowIndex)
+            selectRow(rowIndex)
     }
 
     const startDrag = columnIndex => event => {
@@ -40,6 +43,9 @@ const DataColumn = props => {
         width: width + 'px',
     }
 
+    const styleHeight = {
+        height: rowHeight + 'px',
+    }
     const renderValue = value => {
 
         const { rowIndex, text } = value
@@ -50,9 +56,10 @@ const DataColumn = props => {
 
         return <div
             className={"react-grid cell" + maybeSelected}
+            style={styleHeight}
             key={rowIndex}
             onClick={clickRow(rowIndex)}
-        >
+            title={text} >
             {text}
         </div>
     }
@@ -64,25 +71,23 @@ const DataColumn = props => {
 
 
     const renderHead = (text, colIndex) =>
-        <div className="react-grid head">
+        <div className="react-grid head" style={{ visibility: topVisibility }} >
             <div
                 className="react-grid head-text"
-                onClick={clickColumn(colIndex)}
-            >
+                onClick={clickColumn(colIndex)} >
                 {text}
             </div>
             <div
                 className="react-grid grip"
                 draggable={true}
-                onDragStart={startDrag(colIndex)}
-            >
+                onDragStart={startDrag(colIndex)} >
                 <div className="react-grid sort-symbol">{sortSymbol(colIndex)}</div>
             </div>
         </div>
 
     return <div
         className="react-grid column"
-        style={styleWidth}>
+        style={styleWidth} >
         {renderHead(title, colIndex)}
         {values.map(renderValue)}
     </div>
@@ -98,6 +103,22 @@ class DataGrid extends React.Component {
         this.cache = {}
     }
 
+    componentWillReceiveProps(nextProps) {
+        console.log('nextProps', nextProps)
+        
+        const {
+            sortColumn,
+            sortDescending,
+            selectedRowIndex,
+        } = nextProps
+
+        this.setState = {
+            sortColumn,
+            sortDescending,
+            selectedRowIndex,
+        }
+    }
+
     render() {
         const {
             head = [],
@@ -105,6 +126,7 @@ class DataGrid extends React.Component {
             transform = {},
             filter,
             setSelectedRowIndex,
+            rowHeight,
         } = this.props
 
         const {
@@ -114,7 +136,7 @@ class DataGrid extends React.Component {
             columnResize = []
         } = this.state
 
-        
+
         const dataChanged = !(
             head === this.cache.head &&
             columns === this.cache.columns &&
@@ -124,49 +146,59 @@ class DataGrid extends React.Component {
             transform === this.cache.transform
         )
 
-        this.cache = {
-            head,
-            columns,
-            sortColumn,
-            sortDescending,
-            filter,
-            transform,
-        }
 
         if (dataChanged) {
-            this.columnValues = head.map(column =>
+
+            this.cache = {
+                head,
+                columns,
+                sortColumn,
+                sortDescending,
+                filter,
+                transform,
+            }
+
+            const columnValues = head.map(column =>
                 transform[column.id]
                     ? columns[column.id].map(transform[column.id])
                     : columns[column.id]
             )
 
-            this.sortMap = []
+            this.cache = {
+                head,
+                columns,
+                sortColumn,
+                sortDescending,
+                filter,
+                transform,
+                columnValues,
+                sortMap: []
+            }
 
-            if (this.columnValues.length !== 0) {
+            if (columnValues.length !== 0) {
 
-                const values = this.columnValues[sortColumn]
+                const values = columnValues[sortColumn]
 
-                let result = values.map((x, i) => i)
+                let sortMap = values.map((x, i) => i)
 
                 const compare = (a, b) => a > b ? 1 : a === b ? 0 : -1
 
-                result.sort((a, b) =>
+                sortMap.sort((a, b) =>
                     compare(values[a], values[b]))
 
                 if (sortDescending)
-                    result.reverse()
+                    sortMap.reverse()
 
                 if (columns._filter && filter)
-                    result = result.filter(rowIndex =>
+                    sortMap = sortMap.filter(rowIndex =>
                         columns._filter[rowIndex].includes(filter))
 
-                this.sortMap = result
+                this.cache.sortMap = sortMap
             }
 
         }
 
-        const sortMap = this.sortMap
-        const columnValues = this.columnValues
+        const { sortMap, columnValues } = this.cache
 
         const setSort = (sortColumn, sortDescending) =>
             this.setState({ sortColumn, sortDescending })
@@ -202,9 +234,11 @@ class DataGrid extends React.Component {
                         text: columnValues[colIndex][rowIndex]
                     })),
                 width: column.width + columnResize[colIndex],
+                rowHeight,
                 sortColumn,
                 sortDescending,
                 selectedRowIndex,
+                topVisibility: 'hidden',
 
                 selectColumn,
                 selectRow,
@@ -255,18 +289,15 @@ class DataGrid extends React.Component {
         return <div
             style={{ position: 'relative' }}
             onDragOver={dragOver}
-            onDrop={dragStop}
-        >
+            onDrop={dragStop} >
             <img ref={x => this.invisible = x} style={{ visibility: 'hidden' }} />
             <div
                 className="react-grid top"
-                style={{ position: 'absolute', zIndex: 1 }}
-            >
+                style={{ position: 'absolute', zIndex: 1 }} >
                 {head.map(map_head_top)}
             </div>
             <div
-                className="react-grid grid"
-            >
+                className="react-grid grid" >
                 {head.map(map_head)}
             </div>
         </div>
