@@ -8,7 +8,8 @@ class DataGrid extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            columnResize: (props.head || []).map(x => 0)
+            columnResize: (props.head || []).map(x => 0),
+            totalWidth : props.head.reduce((a, x) => a + x.width, 0)
         }
         this.cache = {}
         this.onDragOver = this.dragOver.bind(this);
@@ -58,7 +59,8 @@ class DataGrid extends React.Component {
             sortColumn = 0,
             sortDescending = false,
             selectedRowIndex = 1,
-            columnResize = []
+            columnResize = [],
+            totalWidth,
         } = this.state
 
         const { sortMap, columnValues } = this.updateCache()
@@ -153,18 +155,19 @@ class DataGrid extends React.Component {
             let resize = columnResize.slice()
             resize[columnIndex] += delta
 
-            this.setState({ columnResize: resize })
+            const initialWidth = head.reduce((a, x) => a + x.width, 0)
+            this.setState({
+                columnResize: resize,
+                totalWidth: resize.reduce((a, x) => a + x, initialWidth)
+            })
         }
 
-        
         const dragStop = event =>
             setDragObject(null)
 
-        const totalWidth = head.reduce((a, x) => a + x.width, 16)
-
         return <div
             className="react-grid grid-container"
-            style={{width: totalWidth+'px'}}
+            style={{ width: totalWidth + 'px' }}
             onDragEnd={dragStop} >
             <img ref={x => this.invisible = x} />
             <div
@@ -242,11 +245,6 @@ class DataGrid extends React.Component {
                 {text}
             </div>
         }
-
-        //    const sortSymbol = colIndex =>
-        //        sortColumn === colIndex
-        //            ? sortDescending ? ' \u21f1' : ' \u21f2'
-        //            : null
 
         const sortSymbol = colIndex =>
             sortColumn === colIndex

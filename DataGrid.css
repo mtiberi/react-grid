@@ -7,12 +7,13 @@
     flex-direction: row;
     border: 1px solid rgba(0, 0, 0, .4);
     height: 200px;
-    overflow: auto;
     border-collapse: separate;
     border-bottom: 1px solid rgba(0, 0, 0, .2);
     padding: 0px;
     margin: 0px;
+    width: 100%;
     font-family: sans-serif;
+    overflow: hidden;
 }
 
 .react-grid.top {
