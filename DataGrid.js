@@ -170,23 +170,25 @@ class DataGrid extends React.Component {
         const invisible =
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
-        return <div
-            className="react-grid grid-container"
-            style={{ width: totalWidth + 'px' }}>
+        return <div className="react-grid top-container">
             <div
-                className="react-grid top"
+                className="react-grid grid-container"
                 style={{ width: totalWidth + 'px' }}>
-                {head.map(map_head_top)}
-            </div>
-            <div className="react-grid data-container"
-                style={{ width: (totalWidth + 16) + 'px' }}>
-
                 <div
-                    className="react-grid grid" >
-                    {head.map(map_head)}
+                    className="react-grid top"
+                    style={{ width: totalWidth + 'px' }}>
+                    {head.map(map_head_top)}
                 </div>
+                <div className="react-grid data-container"
+                    style={{ width: (totalWidth + 16) + 'px' }}>
+
+                    <div
+                        className="react-grid grid" >
+                        {head.map(map_head)}
+                    </div>
+                </div>
+                <img ref={x => this.invisible = x} src={invisible} />
             </div>
-            <img ref={x => this.invisible = x} src={invisible} />
         </div>
     }
 
