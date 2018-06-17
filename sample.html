@@ -35,10 +35,17 @@
             setSelectedRowIndex,
         }
 
+        const App = <div style = {{
+                width:'300px',
+                height:'200px',
+                overflow: 'auto',
+            }}>
+            <DataGrid {...griddata} />
+        </div>
 
-        var domElement = document.getElementById("app");
+        const domElement = document.getElementById("app");
         ReactDOM.render(
-            <DataGrid {...griddata} />,
+            App,
             domElement);
 
      
