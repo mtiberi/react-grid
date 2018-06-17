@@ -9,23 +9,39 @@ class DataGrid extends React.Component {
         super(props)
         this.state = {
             columnResize: (props.head || []).map(x => 0),
-            totalWidth : props.head.reduce((a, x) => a + x.width, 0)
+            totalWidth: props.head.reduce((a, x) => a + x.width, 0)
         }
         this.cache = {}
         this.onDragOver = this.dragOver.bind(this);
+        this.onDragEnd = this.dragEnd.bind(this);
     }
 
     componentWillMount() {
-        window.addEventListener('dragover', this.onDragOver)
+        document.addEventListener('dragover', this.onDragOver)
+        document.addEventListener('dragend', this.onDragEnd)
     }
 
     componentWillUnMount() {
-        window.removeEventListener('dragover', this.onDragOver)
+        document.removeEventListener('dragover', this.onDragOver)
+        document.removeEventListener('dragend', this.onDragEnd)
+    }
+
+
+    dragOver(event) {
+        if (this.dragObject) {
+            event.preventDefault()
+            this.dragObject.currentX = event.pageX
+        }
+    }
+
+    dragEnd(event) {
+        if (this.dragObject) {
+            event.preventDefault()
+            this.dragObject = null
+        }
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log('nextProps', nextProps)
-
         const {
             sortColumn,
             sortDescending,
@@ -39,14 +55,6 @@ class DataGrid extends React.Component {
         }
     }
 
-    dragOver() {
-        if (this.dragObject) {
-            this.dragObject = {
-                ...this.dragObject,
-                currentX: event.pageX
-            }
-        }
-    }
 
     render() {
         const {
@@ -81,30 +89,44 @@ class DataGrid extends React.Component {
                 setSort(colIndex, false)
         }
 
+
+        const resizeColumn = (columnIndex, delta) => {
+
+            const targetSize = head[columnIndex].width + columnResize[columnIndex] + delta
+            if (targetSize < 32)
+                delta = 32 - head[columnIndex].width
+
+            let resize = columnResize.slice()
+            resize[columnIndex] += delta
+
+            const initialWidth = head.reduce((a, x) => a + x.width, 0)
+            this.setState({
+                columnResize: resize,
+                totalWidth: resize.reduce((a, x) => a + x, initialWidth)
+            })
+            return delta;
+        }
+
         const updateDrag = () => {
             if (this.dragObject) {
                 const { columnIndex = -1, startX, currentX } = this.dragObject
                 if (columnIndex >= 0) {
-                    dragResize(columnIndex, startX, currentX)
-                    this.dragObject + {
-                        ...this.dragObject,
-                        startX: currentX,
-                    }
+                    resizeColumn(columnIndex, currentX - startX)
                     setTimeout(updateDrag, 0.5)
                 }
             }
         }
 
-        const setDragObject = (obj, event) => {
-            this.dragObject = obj
-            if (obj) {
-                event.dataTransfer
-                    .setDragImage(this.invisible, 0, 0)
-                setTimeout(updateDrag, 0.5)
-            }
-        }
-
         const DataColumn = this.DataColumn
+
+        const setDragObject = (event, dragObject) => {
+            this.dragObject = dragObject
+            event.dataTransfer
+                .setData('react-grid', '')
+            event.dataTransfer
+                .setDragImage(this.invisible, 100000, 100000)
+            setTimeout(updateDrag, 0.5)
+        }
 
         const map_head = (column, colIndex) => {
             const props = {
@@ -145,39 +167,26 @@ class DataGrid extends React.Component {
             return <DataColumn key={colIndex} {...props} />
         }
 
-        const dragResize = (columnIndex, start, current) => {
-            let delta = current - start
-
-            const targetSize = head[columnIndex].width + columnResize[columnIndex] + delta
-            if (targetSize < 32)
-                delta = 32 - head[columnIndex].width
-
-            let resize = columnResize.slice()
-            resize[columnIndex] += delta
-
-            const initialWidth = head.reduce((a, x) => a + x.width, 0)
-            this.setState({
-                columnResize: resize,
-                totalWidth: resize.reduce((a, x) => a + x, initialWidth)
-            })
-        }
-
-        const dragStop = event =>
-            setDragObject(null)
+        const invisible =
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
         return <div
             className="react-grid grid-container"
-            style={{ width: totalWidth + 'px' }}
-            onDragEnd={dragStop} >
-            <img ref={x => this.invisible = x} />
+            style={{ width: totalWidth + 'px' }}>
             <div
-                className="react-grid top">
+                className="react-grid top"
+                style={{ width: totalWidth + 'px' }}>
                 {head.map(map_head_top)}
             </div>
-            <div
-                className="react-grid grid" >
-                {head.map(map_head)}
+            <div className="react-grid data-container"
+                style={{ width: (totalWidth + 16) + 'px' }}>
+
+                <div
+                    className="react-grid grid" >
+                    {head.map(map_head)}
+                </div>
             </div>
+            <img ref={x => this.invisible = x} src={invisible} />
         </div>
     }
 
@@ -212,12 +221,11 @@ class DataGrid extends React.Component {
         }
 
         const startDrag = columnIndex => event => {
-            event.stopPropagation()
-            setDragObject({
+            setDragObject(event, {
                 columnIndex,
                 startX: event.pageX,
                 currentX: event.pageX,
-            }, event)
+            })
         }
 
         const styleWidth = {
@@ -263,7 +271,7 @@ class DataGrid extends React.Component {
                 </div>
                 <div
                     className="react-grid grip"
-                    draggable={true}
+                    draggable="true"
                     onDragStart={startDrag(colIndex)} >
                 </div>
             </div>

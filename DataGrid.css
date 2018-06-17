@@ -1,6 +1,14 @@
 .react-grid.grid-container {
     position: relative;
+    font-family: 'sans serif';
+    font-size: 12px;
 }
+
+.react-grid.data-container {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
 
 .react-grid.grid {
     display: flex;
@@ -11,15 +19,13 @@
     border-bottom: 1px solid rgba(0, 0, 0, .2);
     padding: 0px;
     margin: 0px;
-    width: 100%;
     font-family: sans-serif;
-    overflow: hidden;
 }
 
 .react-grid.top {
     position: absolute;
-    top:1px;
-    left:1px;
+    border-left: 1px solid gray;
+    border-top: 1px solid white;
     display: flex;
     flex-direction: row;
 }
@@ -41,6 +47,7 @@
 
 .react-grid.head-text {
     flex-grow: 1;
+    padding: 0px;
     padding-left: 4px;
     margin: auto;
 }
@@ -101,7 +108,7 @@
  }
   
 
-  .react-grid.arrow-down {
+.react-grid.arrow-down {
     width: 0; 
     height: 0; 
     border-left: 5px solid transparent;
@@ -110,3 +117,7 @@
     border-top: 5px solid black;
     margin: auto;
  }
+
+ .react-grid.invisible {
+    visibility: none;
+}
