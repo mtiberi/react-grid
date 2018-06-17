@@ -33,9 +33,10 @@ const DataColumn = props => {
     }
 
     const startDrag = columnIndex => event => {
+        event.stopPropagation()
         setDragObject({
             columnIndex,
-            pageX: event.pageX,
+            startX: event.pageX,
             currentX: event.pageX,
         }, event)
     }
@@ -120,30 +121,26 @@ class DataGrid extends React.Component {
         }
     }
 
-    render() {
+    updateCache() {
         const {
             head = [],
             columns = {},
             transform = {},
             filter,
-            setSelectedRowIndex,
-            rowHeight,
         } = this.props
 
         const {
             sortColumn = 0,
             sortDescending = false,
-            selectedRowIndex = 1,
-            columnResize = []
         } = this.state
 
         const dataChanged = !(
             head === this.cache.head &&
             columns === this.cache.columns &&
-            sortColumn === this.cache.sortColumn &&
-            sortDescending === this.cache.sortDescending &&
             filter === this.cache.filter &&
-            transform === this.cache.transform
+            transform === this.cache.transform &&
+            sortColumn === this.cache.sortColumn &&
+            sortDescending === this.cache.sortDescending
         )
 
         if (dataChanged) {
@@ -188,7 +185,27 @@ class DataGrid extends React.Component {
 
         }
 
-        const { sortMap, columnValues } = this.cache
+        const { sortMap, columnValues }  = this.cache
+
+        return { sortMap, columnValues } 
+
+    }
+
+    render() {
+        const {
+            head = [],
+            setSelectedRowIndex,
+            rowHeight,
+        } = this.props
+
+        const {
+            sortColumn = 0,
+            sortDescending = false,
+            selectedRowIndex = 1,
+            columnResize = []
+        } = this.state
+
+        const { sortMap, columnValues } = this.updateCache()
 
         const setSort = (sortColumn, sortDescending) =>
             this.setState({ sortColumn, sortDescending })
@@ -208,10 +225,14 @@ class DataGrid extends React.Component {
 
         const updateDrag = () => {
             if (this.dragObject) {
-                const { columnIndex = -1, pageX, currentX } = this.dragObject
+                const { columnIndex = -1, startX, currentX } = this.dragObject
                 if (columnIndex >= 0) {
-                    dragResize(columnIndex, pageX, currentX)
-                    setTimeout(updateDrag, 0.25)
+                    dragResize(columnIndex, startX, currentX)
+                    this.dragObject + {
+                        ...this.dragObject,
+                        startX: currentX,
+                    }
+                    setTimeout(updateDrag, 0.5)
                 }
             }
         }
@@ -221,7 +242,7 @@ class DataGrid extends React.Component {
             if (obj) {
                 event.dataTransfer
                     .setDragImage(this.invisible, 0, 0)
-                setTimeout(updateDrag, 0.25)
+                setTimeout(updateDrag, 0.5)
             }
         }
 
@@ -267,12 +288,12 @@ class DataGrid extends React.Component {
         const dragResize = (columnIndex, start, current) => {
             let delta = current - start
 
-            const targetSize = head[columnIndex].width + delta
+            const targetSize = head[columnIndex].width + columnResize[columnIndex] + delta
             if (targetSize < 32)
                 delta = 32 - head[columnIndex].width
 
             let resize = columnResize.slice()
-            resize[columnIndex] = delta
+            resize[columnIndex] += delta
 
             this.setState({ columnResize: resize })
         }
@@ -289,8 +310,10 @@ class DataGrid extends React.Component {
         const dragStop = event =>
             setDragObject(null)
 
+        const totalWidth = head.reduce((a,x)=>a+x.width, 0)
+
         return <div
-            style={{ position: 'relative' }}
+            style={{ position: 'relative', width:'100%' }}
             onDragOver={dragOver}
             onDragEnd={dragStop} >
             <img ref={x => this.invisible = x} style={{ visibility: 'hidden' }} />
