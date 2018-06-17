@@ -36,19 +36,21 @@
 .react-grid.head-text {
     flex-grow: 1;
     padding-left: 4px;
+    margin: auto;
+}
+
+.react-grid.head-cell {
+    flex-grow: 1;
     font-weight: bold;
     overflow:hidden;
+    display: flex;
+    flex-direction: row;
+    padding-left: 4px;
 }
 
-.react-grid.sort-symbol {
-    cursor: ew-resize;
-    border: 1px solid black;
-    padding: 0px;
-    margin: 0px;
-    height: 90%;    
-}
 
 .react-grid.grip {
+    display: flex;
     flex-shrink: 0;
     color: #606060;
     border-left: 1px dotted #909090;
@@ -74,3 +76,25 @@
 .react-grid.cell:nth-child(even):not(.selected) {
     background-color: #e9e9ff
 }
+
+/* https://css-tricks.com/snippets/css/css-triangle/ */
+
+.react-grid.arrow-up {
+    width: 0; 
+    height: 0; 
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    
+    border-bottom: 5px solid black;
+    margin: auto;
+  }
+  
+  .react-grid.arrow-down {
+    width: 0; 
+    height: 0; 
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    
+    border-top: 5px solid black;
+    margin: auto;
+  }

@@ -67,23 +67,30 @@ const DataColumn = props => {
         </div>
     }
 
+    //    const sortSymbol = colIndex =>
+    //        sortColumn === colIndex
+    //            ? sortDescending ? ' \u21f1' : ' \u21f2'
+    //            : null
+
     const sortSymbol = colIndex =>
         sortColumn === colIndex
-            ? sortDescending ? ' \u21f1' : ' \u21f2'
+            ? sortDescending ? ' arrow-up' : ' arrow-down'
             : null
 
     const renderHead = (text, colIndex) =>
         <div className="react-grid head" style={{ visibility: topVisibility, height: styleHeight.height }} >
             <div
-                className="react-grid head-text"
+                className="react-grid head-cell"
                 onClick={clickColumn(colIndex)} >
-                {text}
+                <div className={"react-grid " + sortSymbol(colIndex)}></div>
+                <div className="react-grid head-text">
+                    {text}
+                </div>
             </div>
             <div
                 className="react-grid grip"
                 draggable={true}
                 onDragStart={startDrag(colIndex)} >
-                <div className="react-grid sort-symbol">{sortSymbol(colIndex)}</div>
             </div>
         </div>
 
@@ -185,9 +192,9 @@ class DataGrid extends React.Component {
 
         }
 
-        const { sortMap, columnValues }  = this.cache
+        const { sortMap, columnValues } = this.cache
 
-        return { sortMap, columnValues } 
+        return { sortMap, columnValues }
 
     }
 
@@ -310,10 +317,10 @@ class DataGrid extends React.Component {
         const dragStop = event =>
             setDragObject(null)
 
-        const totalWidth = head.reduce((a,x)=>a+x.width, 0)
+        const totalWidth = head.reduce((a, x) => a + x.width, 0)
 
         return <div
-            style={{ position: 'relative', width:'100%' }}
+            style={{ position: 'relative', width: '100%' }}
             onDragOver={dragOver}
             onDragEnd={dragStop} >
             <img ref={x => this.invisible = x} style={{ visibility: 'hidden' }} />
