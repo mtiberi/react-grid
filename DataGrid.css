@@ -52,10 +52,10 @@
 .react-grid.grip {
     display: flex;
     flex-shrink: 0;
-    color: #606060;
-    border-left: 1px dotted #909090;
-    min-width: 4px;
+    min-width: 8px;
     cursor: ew-resize;
+    border-left: 1px solid  rgba(0, 0, 0, .1);
+    background-color: rgba(0, 0, 0, .05);
 }
 
 .react-grid.cell {
@@ -77,6 +77,11 @@
     background-color: #e9e9ff
 }
 
+.react-grid.shadow {
+    box-shadow: 2px 2px grey;
+    z-index: 2;
+ }
+
 /* https://css-tricks.com/snippets/css/css-triangle/ */
 
 .react-grid.arrow-up {
@@ -87,8 +92,9 @@
     
     border-bottom: 5px solid black;
     margin: auto;
-  }
+ }
   
+
   .react-grid.arrow-down {
     width: 0; 
     height: 0; 
@@ -97,4 +103,4 @@
     
     border-top: 5px solid black;
     margin: auto;
-  }
+ }
