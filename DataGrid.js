@@ -11,6 +11,15 @@ class DataGrid extends React.Component {
             columnResize: (props.head || []).map(x => 0)
         }
         this.cache = {}
+        this.onDragOver = this.dragOver.bind(this);
+    }
+
+    componentWillMount() {
+        window.addEventListener('dragover', this.onDragOver)
+    }
+
+    componentWillUnMount() {
+        window.removeEventListener('dragover', this.onDragOver)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -29,6 +38,14 @@ class DataGrid extends React.Component {
         }
     }
 
+    dragOver() {
+        if (this.dragObject) {
+            this.dragObject = {
+                ...this.dragObject,
+                currentX: event.pageX
+            }
+        }
+    }
 
     render() {
         const {
@@ -139,23 +156,15 @@ class DataGrid extends React.Component {
             this.setState({ columnResize: resize })
         }
 
-        const dragOver = event => {
-            if (this.dragObject) {
-                this.dragObject = {
-                    ...this.dragObject,
-                    currentX: event.pageX
-                }
-            }
-        }
-
+        
         const dragStop = event =>
             setDragObject(null)
 
-        const totalWidth = head.reduce((a, x) => a + x.width, 0)
+        const totalWidth = head.reduce((a, x) => a + x.width, 16)
 
         return <div
             className="react-grid grid-container"
-            onDragOver={dragOver}
+            style={{width: totalWidth+'px'}}
             onDragEnd={dragStop} >
             <img ref={x => this.invisible = x} />
             <div
