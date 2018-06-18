@@ -69,6 +69,7 @@ class DataGrid extends React.Component {
             selectedRowIndex = 1,
             columnResize = [],
             totalWidth,
+            marginTop = 0,
         } = this.state
 
         const { sortMap, columnValues } = this.updateCache()
@@ -170,7 +171,14 @@ class DataGrid extends React.Component {
         const invisible =
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
-        return <div className="react-grid top-container">
+        const wheel = event => {
+            const deltaY = event.nativeEvent.deltaY
+            const nextMarginTop = marginTop - deltaY
+            if (nextMarginTop <= 0)
+                this.setState({ marginTop: nextMarginTop })
+        }
+
+        return <div className="react-grid top-container" onWheel={wheel} >
             <div
                 className="react-grid grid-container"
                 style={{ width: totalWidth + 'px' }}>
@@ -180,9 +188,9 @@ class DataGrid extends React.Component {
                     {head.map(map_head_top)}
                 </div>
                 <div className="react-grid data-container"
-                    style={{ width: (totalWidth + 16) + 'px' }}>
-
+                    style={{ width: (totalWidth) + 'px'}}>
                     <div
+                        style={{marginTop: marginTop + 'px' }}
                         className="react-grid grid" >
                         {head.map(map_head)}
                     </div>
@@ -242,7 +250,7 @@ class DataGrid extends React.Component {
 
             return <div
                 className={"react-grid cell" + maybeSelected}
-                style={{height: pix(rowHeight)}}
+                style={{ height: pix(rowHeight) }}
                 key={rowIndex}
                 onClick={clickRow(rowIndex)}
                 title={text} >
@@ -274,7 +282,7 @@ class DataGrid extends React.Component {
 
         return <div
             className="react-grid column"
-            style={{width: pix(width), lineHeight: pix(rowHeight-2)}} >
+            style={{ width: pix(width), lineHeight: pix(rowHeight - 2) }} >
             {renderHead(title, colIndex)}
             {values.map(renderValue)}
         </div>

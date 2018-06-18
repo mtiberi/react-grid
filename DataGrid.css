@@ -11,8 +11,7 @@
 }
 
 .react-grid.data-container {
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
     margin-left: -1px;
 }
 
