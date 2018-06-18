@@ -7,7 +7,7 @@
 .react-grid.grid-container {
     position: relative;
     font-family: 'sans serif';
-    font-size: 12px;
+    font-size: 10pt;
 }
 
 .react-grid.data-container {
