@@ -230,13 +230,7 @@ class DataGrid extends React.Component {
             })
         }
 
-        const styleWidth = {
-            width: width + 'px',
-        }
-
-        const styleHeight = {
-            height: rowHeight + 'px',
-        }
+        const pix = x => x + 'px'
 
         const renderValue = value => {
 
@@ -248,7 +242,7 @@ class DataGrid extends React.Component {
 
             return <div
                 className={"react-grid cell" + maybeSelected}
-                style={styleHeight}
+                style={{height: pix(rowHeight)}}
                 key={rowIndex}
                 onClick={clickRow(rowIndex)}
                 title={text} >
@@ -262,7 +256,7 @@ class DataGrid extends React.Component {
                 : null
 
         const renderHead = (text, colIndex) =>
-            <div className="react-grid head" style={{ visibility: topVisibility, height: styleHeight.height }} >
+            <div className="react-grid head" style={{ visibility: topVisibility, height: pix(rowHeight) }} >
                 <div
                     className="react-grid head-cell"
                     onClick={clickColumn(colIndex)} >
@@ -280,7 +274,7 @@ class DataGrid extends React.Component {
 
         return <div
             className="react-grid column"
-            style={styleWidth} >
+            style={{width: pix(width), lineHeight: pix(rowHeight-2)}} >
             {renderHead(title, colIndex)}
             {values.map(renderValue)}
         </div>
