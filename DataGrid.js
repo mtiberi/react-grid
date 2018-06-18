@@ -14,6 +14,7 @@ class DataGrid extends React.Component {
         this.cache = {}
         this.onDragOver = this.dragOver.bind(this);
         this.onDragEnd = this.dragEnd.bind(this);
+        this.DataColumn = this.DataColumn.bind(this)
     }
 
     componentWillMount() {
@@ -25,7 +26,6 @@ class DataGrid extends React.Component {
         document.removeEventListener('dragover', this.onDragOver)
         document.removeEventListener('dragend', this.onDragEnd)
     }
-
 
     dragOver(event) {
         if (this.dragObject) {
@@ -54,7 +54,6 @@ class DataGrid extends React.Component {
             selectedRowIndex,
         }
     }
-
 
     render() {
         const {
@@ -113,21 +112,21 @@ class DataGrid extends React.Component {
                 const { columnIndex = -1, startX, currentX } = this.dragObject
                 if (columnIndex >= 0) {
                     resizeColumn(columnIndex, currentX - startX)
-                    setTimeout(updateDrag, 0.5)
+                    setTimeout(updateDrag, 40)
                 }
             }
         }
 
-        const DataColumn = this.DataColumn
-
-        const setDragObject = (event, dragObject) => {
-            this.dragObject = dragObject
-            event.dataTransfer
-                .setData('react-grid', '')
-            event.dataTransfer
-                .setDragImage(this.invisible, 100000, 100000)
-            setTimeout(updateDrag, 0.5)
+        const startDrag = (columnIndex, startX) => {
+            this.dragObject = {
+                columnIndex,
+                startX,
+                currentX: startX,
+            }
+            setTimeout(updateDrag, 0)
         }
+
+        const DataColumn = this.DataColumn
 
         const map_head = (column, colIndex) => {
             const props = {
@@ -147,7 +146,7 @@ class DataGrid extends React.Component {
 
                 selectColumn,
                 selectRow,
-                setDragObject,
+                startDrag,
             }
             return <DataColumn key={colIndex} {...props} />
         }
@@ -163,7 +162,7 @@ class DataGrid extends React.Component {
                 sortDescending,
 
                 selectColumn,
-                setDragObject,
+                startDrag,
             }
             return <DataColumn key={colIndex} {...props} />
         }
@@ -172,13 +171,14 @@ class DataGrid extends React.Component {
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
         const wheel = event => {
+            event.stopPropagation();
             const deltaY = event.nativeEvent.deltaY
             const nextMarginTop = marginTop - deltaY
             if (nextMarginTop <= 0)
                 this.setState({ marginTop: nextMarginTop })
         }
 
-        return <div className="react-grid top-container" onWheel={wheel} >
+        return <div className="react-grid top-container" onWheel={wheel}>
             <div
                 className="react-grid grid-container"
                 style={{ width: totalWidth + 'px' }}>
@@ -188,9 +188,9 @@ class DataGrid extends React.Component {
                     {head.map(map_head_top)}
                 </div>
                 <div className="react-grid data-container"
-                    style={{ width: (totalWidth) + 'px'}}>
+                    style={{ width: (totalWidth) + 'px' }}>
                     <div
-                        style={{marginTop: marginTop + 'px' }}
+                        style={{ marginTop: marginTop + 'px' }}
                         className="react-grid grid" >
                         {head.map(map_head)}
                     </div>
@@ -215,7 +215,7 @@ class DataGrid extends React.Component {
 
             selectColumn,
             selectRow,
-            setDragObject,
+            startDrag,
         } = props;
 
 
@@ -230,12 +230,14 @@ class DataGrid extends React.Component {
                 selectRow(rowIndex)
         }
 
-        const startDrag = columnIndex => event => {
-            setDragObject(event, {
-                columnIndex,
-                startX: event.pageX,
-                currentX: event.pageX,
-            })
+        const beginDrag = columnIndex => event => {
+            event.dataTransfer
+                .setData('react-grid', '')
+            event.dataTransfer
+                .setDragImage(this.invisible, 100000, 100000)
+
+
+            startDrag(columnIndex, event.pageX)
         }
 
         const pix = x => x + 'px'
@@ -276,7 +278,7 @@ class DataGrid extends React.Component {
                 <div
                     className="react-grid grip"
                     draggable="true"
-                    onDragStart={startDrag(colIndex)} >
+                    onDragStart={beginDrag(colIndex)} >
                 </div>
             </div>
 
@@ -302,12 +304,12 @@ class DataGrid extends React.Component {
         } = this.state
 
         const dataChanged = !(
+            sortColumn === this.cache.sortColumn &&
+            sortDescending === this.cache.sortDescending &&
             head === this.cache.head &&
             columns === this.cache.columns &&
             filter === this.cache.filter &&
-            transform === this.cache.transform &&
-            sortColumn === this.cache.sortColumn &&
-            sortDescending === this.cache.sortDescending
+            transform === this.cache.transform
         )
 
         if (dataChanged) {
@@ -352,9 +354,7 @@ class DataGrid extends React.Component {
 
         }
 
-        const { sortMap, columnValues } = this.cache
-
-        return { sortMap, columnValues }
+        return this.cache
 
     }
 

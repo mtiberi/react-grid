@@ -55,6 +55,7 @@
     padding: 0px;
     padding-left: 4px;
     margin: auto;
+    cursor: pointer;
 }
 
 .react-grid.head-cell {
