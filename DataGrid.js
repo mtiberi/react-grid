@@ -89,29 +89,29 @@ class DataGrid extends React.Component {
                 setSort(colIndex, false)
         }
 
+        const resizeColumn = (columnIndex, value) => {
 
-        const resizeColumn = (columnIndex, delta) => {
+            if (columnResize[columnIndex] === value)
+                return
 
-            const targetSize = head[columnIndex].width + columnResize[columnIndex] + delta
-            if (targetSize < 32)
-                delta = 32 - head[columnIndex].width
+            if (head[columnIndex].width + value < 32)
+                return
 
             let resize = columnResize.slice()
-            resize[columnIndex] += delta
+            resize[columnIndex] = value
 
             const initialWidth = head.reduce((a, x) => a + x.width, 0)
             this.setState({
                 columnResize: resize,
                 totalWidth: resize.reduce((a, x) => a + x, initialWidth)
             })
-            return delta;
         }
 
         const updateDrag = () => {
             if (this.dragObject) {
-                const { columnIndex = -1, startX, currentX } = this.dragObject
+                const { columnIndex, startX, currentX, initialWidth } = this.dragObject
                 if (columnIndex >= 0) {
-                    resizeColumn(columnIndex, currentX - startX)
+                    resizeColumn(columnIndex, initialWidth + currentX - startX)
                     setTimeout(updateDrag, 40)
                 }
             }
@@ -120,6 +120,7 @@ class DataGrid extends React.Component {
         const startDrag = (columnIndex, startX) => {
             this.dragObject = {
                 columnIndex,
+                initialWidth:columnResize[columnIndex],
                 startX,
                 currentX: startX,
             }
