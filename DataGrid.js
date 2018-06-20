@@ -81,7 +81,7 @@ class DataGrid extends React.Component {
             height,
         } = this.state
 
-        const { sortMap, columnValues } = this.updateCache()
+        const { sortMap, columnValues, dataHeight } = this.updateCache()
 
         const setSort = (sortColumn, sortDescending) =>
             this.setState({ sortColumn, sortDescending })
@@ -185,12 +185,22 @@ class DataGrid extends React.Component {
         const wheel = event => {
             event.stopPropagation();
             const deltaY = event.nativeEvent.deltaY
-            const nextMarginTop = marginTop - deltaY
-            if (nextMarginTop <= 0)
+
+            let nextMarginTop = marginTop - deltaY
+            if (nextMarginTop > 0)
+                nextMarginTop = 0
+
+            if (scrollHandler.notifyScroll)
+                scrollHandler.notifyScroll(-nextMarginTop)
+            else if (this.state.marginTop !== nextMarginTop)
                 this.setState({ marginTop: nextMarginTop })
         }
 
-        scrollHandler.setScroll = (value) =>  this.setState({ marginTop: -value })
+        scrollHandler.setScroll = (value) => {
+            const marginTop = -value;
+            if (this.state.marginTop != marginTop)
+                this.setState({ marginTop })
+        }
 
         return <div style={{ width, height }}>
             <div className="react-grid top-container" onWheel={wheel}>
@@ -203,7 +213,7 @@ class DataGrid extends React.Component {
                         {head.map(map_head_top)}
                     </div>
                     <div className="react-grid data-container"
-                        style={{ width: (totalWidth) + 'px' }}>
+                        style={{ width: (totalWidth) + 'px', height: (dataHeight) + 'px' }}>
                         <div
                             style={{ marginTop: marginTop + 'px' }}
                             className="react-grid grid" >
@@ -367,8 +377,9 @@ class DataGrid extends React.Component {
                         columns._filter[rowIndex].includes(filter))
 
                 this.cache.sortMap = sortMap
+                this.cache.dataHeight = this.props.rowHeight * sortMap.length
                 if (setDataHeight)
-                        setDataHeight(this.props.rowHeight * sortMap.length)
+                    setDataHeight(this.cache.dataHeight)
             }
 
         }
