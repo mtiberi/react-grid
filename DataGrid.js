@@ -150,6 +150,7 @@ class DataGrid extends React.Component {
                         text: columnValues[colIndex][rowIndex]
                     })),
                 width: column.width + columnResize[colIndex],
+                height: dataHeight,
                 rowHeight,
                 sortColumn,
                 sortDescending,
@@ -204,12 +205,10 @@ class DataGrid extends React.Component {
 
         return <div style={{ width, height }}>
             <div className="react-grid top-container" onWheel={wheel}>
-                <div
-                    className="react-grid grid-container"
-                    style={{ width: totalWidth + 'px' }}>
+                <div className="react-grid grid-container">
                     <div
                         className="react-grid top"
-                        style={{ width: totalWidth + 'px' }}>
+                        style={{ width: totalWidth + 'px', maxHeight: rowHeight + 'px' }}>
                         {head.map(map_head_top)}
                     </div>
                     <div className="react-grid data-container"
@@ -233,6 +232,7 @@ class DataGrid extends React.Component {
             title = 'no title',
             values = [],
             width = 100,
+            height = 100,
             rowHeight = 16,
             sortColumn,
             sortDescending,

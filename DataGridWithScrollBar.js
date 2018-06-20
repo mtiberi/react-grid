@@ -26,7 +26,7 @@ const DataGridWithScrollBar = props => {
     const setDataHeight = value => {
         dataHeight = value
         if (scrollElement) {
-            scrollElement.style.height = (value+2*rowHeight) + 'px'
+            scrollElement.style.height = (value) + 'px'
             const parent = scrollElement.parentElement
             parent.removeEventListener('scroll', scroll)
             parent.addEventListener('scroll', scroll)

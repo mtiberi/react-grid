@@ -51,6 +51,8 @@
 
 .react-grid.column {
     background-color: white;
+    display: flex;
+    flex-direction: column;
 }
 
 .react-grid.head {
