@@ -67,6 +67,7 @@ class DataGrid extends React.Component {
             head = [],
             setSelectedRowIndex,
             rowHeight,
+            scrollHandler,
         } = this.props
 
         const {
@@ -98,6 +99,8 @@ class DataGrid extends React.Component {
                 setSort(colIndex, false)
         }
 
+        const initialWidth = head.reduce((a, x) => a + x.width, 0)
+
         const resizeColumn = (columnIndex, value) => {
 
             if (columnResize[columnIndex] === value)
@@ -109,7 +112,6 @@ class DataGrid extends React.Component {
             let resize = columnResize.slice()
             resize[columnIndex] = value
 
-            const initialWidth = head.reduce((a, x) => a + x.width, 0)
             this.setState({
                 columnResize: resize,
                 totalWidth: resize.reduce((a, x) => a + x, initialWidth)
@@ -187,6 +189,8 @@ class DataGrid extends React.Component {
             if (nextMarginTop <= 0)
                 this.setState({ marginTop: nextMarginTop })
         }
+
+        scrollHandler.setScroll = (value) =>  this.setState({ marginTop: -value })
 
         return <div style={{ width, height }}>
             <div className="react-grid top-container" onWheel={wheel}>
@@ -308,6 +312,7 @@ class DataGrid extends React.Component {
             columns = {},
             transform = {},
             filter,
+            setDataHeight
         } = this.props
 
         const {
@@ -362,6 +367,8 @@ class DataGrid extends React.Component {
                         columns._filter[rowIndex].includes(filter))
 
                 this.cache.sortMap = sortMap
+                if (setDataHeight)
+                        setDataHeight(this.props.rowHeight * sortMap.length)
             }
 
         }

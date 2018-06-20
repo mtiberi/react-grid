@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" type="text/css" href="DataGrid.css">
     <script type="text/babel" src="DataGrid.js"></script>
+    <script type="text/babel" src="DataGridWithScrollBar.js"></script>
 
     <script type="text/babel">
 
@@ -34,7 +35,10 @@
             setSelectedRowIndex,
         }
 
-        const App = <DataGrid width="302px" height="150px"  {...griddata} />
+        const width = 500
+        const height = 150
+
+        const App = <DataGridWithScrollBar width={width} height={height} {...griddata} />
         
 
         const domElement = document.getElementById("app");
@@ -47,11 +51,7 @@
 </head>
 
 <body>
-    <div class="react-grid outer-container" style="border:1px solid black;width:317px; height:152px">
-        <div id='app'></div>
-        <div class="react-grid scrollbar" style="height:150px">
-            <div style="height:200px"></div>
-        </div>
+    <div id='app'></div>
 </body>
 
 </html>
