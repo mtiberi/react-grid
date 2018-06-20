@@ -34,13 +34,8 @@
             setSelectedRowIndex,
         }
 
-        const App = <div style = {{
-                width:'302px',
-                height:'150px',
-                border: '1px solid black',
-            }}>
-            <DataGrid {...griddata} />
-        </div>
+        const App = <DataGrid width="302px" height="150px"  {...griddata} />
+        
 
         const domElement = document.getElementById("app");
         ReactDOM.render(
@@ -52,7 +47,11 @@
 </head>
 
 <body>
-    <div id='app'></div>
+    <div class="react-grid outer-container" style="border:1px solid black;width:317px; height:152px">
+        <div id='app'></div>
+        <div class="react-grid scrollbar" style="height:150px">
+            <div style="height:200px"></div>
+        </div>
 </body>
 
 </html>
