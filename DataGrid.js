@@ -44,30 +44,13 @@ class DataGrid extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {
-            sortColumn,
-            sortDescending,
-            selectedRowIndex,
-            width,
-            height,
-        } = nextProps
-
-        this.setState = {
-            sortColumn,
-            sortDescending,
-            selectedRowIndex,
-            width,
-            height,
-        }
-    }
 
     render() {
         const {
             head = [],
             setSelectedRowIndex,
             rowHeight,
-            scrollHandler,
+            scrollPos,
         } = this.props
 
         const {
@@ -183,28 +166,11 @@ class DataGrid extends React.Component {
         const invisible =
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
-        const wheel = event => {
-            event.stopPropagation();
-            const deltaY = event.nativeEvent.deltaY
+    
 
-            let nextMarginTop = marginTop - deltaY
-            if (nextMarginTop > 0)
-                nextMarginTop = 0
-
-            if (scrollHandler.notifyScroll)
-                scrollHandler.notifyScroll(-nextMarginTop)
-            else if (this.state.marginTop !== nextMarginTop)
-                this.setState({ marginTop: nextMarginTop })
-        }
-
-        scrollHandler.setScroll = (value) => {
-            const marginTop = -value;
-            if (this.state.marginTop != marginTop)
-                this.setState({ marginTop })
-        }
-
+  
         return <div style={{ width, height }}>
-            <div className="react-grid top-container" onWheel={wheel}>
+            <div className="react-grid top-container">
                 <div className="react-grid grid-container">
                     <div
                         className="react-grid top"
@@ -214,7 +180,7 @@ class DataGrid extends React.Component {
                     <div className="react-grid data-container"
                         style={{ width: (totalWidth) + 'px', height: (dataHeight) + 'px' }}>
                         <div
-                            style={{ marginTop: marginTop + 'px' }}
+                            style={{ marginTop: (-scrollPos) + 'px' }}
                             className="react-grid grid" >
                             {head.map(map_head)}
                         </div>
@@ -232,7 +198,6 @@ class DataGrid extends React.Component {
             title = 'no title',
             values = [],
             width = 100,
-            height = 100,
             rowHeight = 16,
             sortColumn,
             sortDescending,
