@@ -72,8 +72,6 @@ class DataGridWithScrollBar extends React.Component {
         const pix = x => x + 'px'
 
         const scrollbarVisible = dataHeight >= height
-        const scrollbarWidth = scrollbarVisible ? 17 : 2
-        console.log(dataHeight, height)
 
         const dg_prop = {
             ...this.props,
