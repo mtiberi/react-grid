@@ -11,26 +11,17 @@ class DataGridWithScrollBar extends React.Component {
         this.state = {}
     }
 
-    componentDidMount() {
-        setTimeout(() => this.tickCount(), 0)
-    }
-
-    componentWillUnmount() {
-        this.stopTimer = true;
-    }
-
-
-    tickCount() {
-        if (this.stopTimer)
+    updateScroll() {
+        if (this.scrollPos === null)
+        {
+            this.scrollPos = undefined
             return;
+        }
 
         if (this.scrollPos !== this.state.scrollPos)
             this.setState({ scrollPos: this.scrollPos })
-
-        if (this.props.onTimer)
-            this.props.onTimer()
-
-        setTimeout(() => this.tickCount(), 40)
+        this.scrollPos = null
+        setTimeout(() => this.updateScroll(), 20)
     }
 
     render() {
@@ -42,6 +33,10 @@ class DataGridWithScrollBar extends React.Component {
         const scroll = e => {
             e.preventDefault();
             e.stopPropagation();
+            
+            if (this.scrollPos === undefined)
+                setTimeout(() => this.updateScroll(), 0)
+
             this.scrollPos = e.target.scrollTop
         }
 
