@@ -49,6 +49,7 @@
 
 .react-grid.head-row {
     position: absolute;
+    border-top: 1px solid white;
     display: flex;
     flex-direction: row;
 }
@@ -89,8 +90,6 @@
 
 
 .react-grid.grip {
-    display: flex;
-    flex-shrink: 0;
     min-width: 8px;
     cursor: ew-resize;
     border-left: 1px solid  rgba(0, 0, 0, .1);
