@@ -144,7 +144,7 @@ class DataGrid extends React.Component {
         }
 
         const map_head_top = (column, colIndex) => {
-            const props = {
+            let props = {
                 colIndex,
                 title: column.title,
                 values: [],
@@ -156,6 +156,10 @@ class DataGrid extends React.Component {
                 selectColumn,
                 startDrag,
             }
+            // make the grip be centered on the column end
+            if (colIndex === 0)
+                props.width += 3;
+
             return <DataColumn key={colIndex} {...props} />
         }
 

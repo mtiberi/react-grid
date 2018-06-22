@@ -49,7 +49,6 @@
 
 .react-grid.head-row {
     position: absolute;
-    border-top: 1px solid white;
     display: flex;
     flex-direction: row;
 }
@@ -62,7 +61,6 @@
 
 .react-grid.head {
     background-color: #d0d0d0;
-    border-left: 1px solid white;
     border-right: 1px solid rgba(0, 0, 0, .2);
     border-bottom: 1px solid rgba(0, 0, 0, .2);
     font-weight: normal;
@@ -85,14 +83,15 @@
     overflow:hidden;
     display: flex;
     flex-direction: row;
-    padding-left: 4px;
+    padding-left: 3px;
 }
 
 
 .react-grid.grip {
     min-width: 8px;
     cursor: ew-resize;
-    border-left: 1px solid  rgba(0, 0, 0, .1);
+    border: 0px;
+    border-left: 1px solid  rgba(0, 0, 0, .2);
     background-color: rgba(0, 0, 0, .05);
 }
 
