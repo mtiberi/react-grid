@@ -60,9 +60,7 @@ class DataGridWithScrollBar extends React.Component {
             event.stopPropagation();
             if (this.scrollbar) {
                 const deltaY = event.nativeEvent.deltaY
-                let scrollpos = (this.scrollPos || 0) + deltaY
-                if (scrollpos < 0)
-                    scrollpos = 0
+                let scrollpos = this.scrollbar.scrollTop + deltaY
                 this.scrollbar.scrollTop = scrollpos
             }
         }
