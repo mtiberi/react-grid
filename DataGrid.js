@@ -9,7 +9,7 @@ class DataGrid extends React.Component {
         super(props)
         this.state = {
             columnResize: (props.head || []).map(x => 0),
-            totalWidth: props.head.reduce((a, x) => a + x.width, 0),
+            //totalWidth: props.head.reduce((a, x) => a + x.width, 0),
             width: props.width,
             height: props.height,
             selectedRowIndex: props.selectedRowIndex,
@@ -58,10 +58,6 @@ class DataGrid extends React.Component {
             sortDescending = false,
             selectedRowIndex = 1,
             columnResize = [],
-            totalWidth,
-            marginTop = 0,
-            width,
-            height,
         } = this.state
 
         const { sortMap, columnValues, dataHeight } = this.updateCache()
@@ -82,7 +78,7 @@ class DataGrid extends React.Component {
                 setSort(colIndex, false)
         }
 
-        const initialWidth = head.reduce((a, x) => a + x.width, 0)
+        //const initialWidth = head.reduce((a, x) => a + x.width, 0)
 
         const resizeColumn = (columnIndex, value) => {
 
@@ -97,7 +93,7 @@ class DataGrid extends React.Component {
 
             this.setState({
                 columnResize: resize,
-                totalWidth: resize.reduce((a, x) => a + x, initialWidth)
+                //totalWidth: resize.reduce((a, x) => a + x, initialWidth)
             })
         }
 
@@ -166,27 +162,26 @@ class DataGrid extends React.Component {
         const invisible =
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
-    
 
-  
-        return <div style={{ width, height }}>
-            <div className="react-grid top-container">
-                <div className="react-grid grid-container">
-                    <div
-                        className="react-grid top"
-                        style={{ width: totalWidth + 'px', maxHeight: rowHeight + 'px' }}>
-                        {head.map(map_head_top)}
-                    </div>
-                    <div className="react-grid data-container"
-                        style={{ width: (totalWidth) + 'px', height: (dataHeight) + 'px' }}>
-                        <div
-                            style={{ marginTop: (-scrollPos) + 'px' }}
-                            className="react-grid grid" >
-                            {head.map(map_head)}
-                        </div>
-                    </div>
-                    <img ref={x => this.invisible = x} src={invisible} />
+
+
+        return <div className="react-grid top-container">
+            <div className="react-grid grid-container">
+                <div
+                    className="react-grid top"
+                    style={{ maxHeight: rowHeight + 'px' }}>
+                    {head.map(map_head_top)}
                 </div>
+                <div 
+                    className="react-grid data-container"
+                    style={{ height: (dataHeight) + 'px' }}>
+                    <div
+                        style={{ marginTop: (-scrollPos) + 'px', width: '100%' }}
+                        className="react-grid grid" >
+                        {head.map(map_head)}
+                    </div>
+                </div>
+                <img ref={x => this.invisible = x} src={invisible} />
             </div>
         </div>
     }

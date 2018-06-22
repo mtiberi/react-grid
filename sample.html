@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="DataGrid.css">
     <script type="text/babel" src="DataGrid.js"></script>
     <script type="text/babel" src="DataGridWithScrollBar.js"></script>
-
+    <script type="text/babel" src="DataGridResizeable.js"></script>
     <script type="text/babel">
 
         const setSelectedRowIndex = (rowIndex) => 
@@ -35,10 +35,12 @@
             setSelectedRowIndex,
         }
 
-        const width = 500
+        const width = 400
         const height = 150
 
-        const App = <DataGridWithScrollBar width={width} height={height} {...griddata} />
+        const App = <div style={{border:'1px solid black'}}>
+            <DataGridResizeable width={width} height={height} {...griddata} />
+        </div>
         
 
         const domElement = document.getElementById("app");

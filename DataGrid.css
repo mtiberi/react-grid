@@ -2,7 +2,7 @@
     position: relative;
     display: flex;
     flex-direction: row;
-    border: 1px solid black;
+    border: 0px;
 }
 
 .react-grid.scrollbar {
@@ -149,4 +149,11 @@
 
  .react-grid.invisible {
     visibility: none;
+}
+
+div.resizeable {
+    overflow: hidden;
+    border: 0px;
+    padding: 0px;
+    margin:0px;
 }

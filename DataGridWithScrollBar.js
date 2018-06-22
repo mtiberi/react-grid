@@ -23,8 +23,12 @@ class DataGridWithScrollBar extends React.Component {
     tickCount() {
         if (this.stopTimer)
             return;
+
         if (this.scrollPos !== this.state.scrollPos)
             this.setState({ scrollPos: this.scrollPos })
+
+        if (this.props.onTimer)
+            this.props.onTimer()
 
         setTimeout(() => this.tickCount(), 40)
     }
