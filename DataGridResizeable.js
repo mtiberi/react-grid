@@ -28,26 +28,30 @@ class DataGridResizeable extends React.Component {
             const deltaWidth = parent.clientWidth - child.offsetWidth
             const deltaHeight = parent.clientHeight - child.offsetHeight
             if (deltaWidth != 0 || deltaHeight != 0) {
-                if (!this.resize)
-                    setTimeout(() => this.clock(), 50)
+                if (this.resize === undefined)
+                    setTimeout(() => this.updateSize(), 0)
+                    
                 this.resize = { deltaWidth, deltaHeight }
             }
         }
     }
 
-    clock() {
-        console.log('clock', this.resize)
+    updateSize() {
+        if (this.resize == null) {
+            this.resize = undefined
+            return
+        }
+
         if (this.resize) {
+
             const { deltaWidth, deltaHeight } = this.resize;
-            this.resize = {};
-            if (deltaWidth === undefined) {
-                this.resize = null
-                return
-            }
+            this.resize = null;
+
             const width = this.state.width + deltaWidth
             const height = this.state.height + deltaHeight
             this.setState({ width, height })
-            setTimeout(() => this.clock(), 10)
+            
+            setTimeout(() => this.updateSize(), 10)
         }
 
     }
@@ -55,7 +59,6 @@ class DataGridResizeable extends React.Component {
 
     render() {
         const { width = 100, height = 100 } = this.state
-        console.log('render', width, height)
         const ref = element => { this.element = element; this.onResize() }
 
         return <div ref={ref} className='resizeable'>
