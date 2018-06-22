@@ -5,6 +5,14 @@
     border: 0px;
 }
 
+.react-grid.horizontalscroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+}
+
 .react-grid.scrollbar {
     overflow-y: auto;
     overflow-x: hidden;
