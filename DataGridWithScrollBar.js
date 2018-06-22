@@ -72,14 +72,8 @@ class DataGridWithScrollBar extends React.Component {
 
         const scrollbarVisible = dataHeight >= height
 
-        const dg_prop = {
-            ...this.props,
-            width: pix(width - 2),
-            height: pix(height - 2),
-        }
-
         return <div className="react-grid outer-container" onWheel={wheel} style={{ width: pix(width), height: pix(height) }} >
-            <DataGrid scrollPos={scrollPos} setDataHeight={setDataHeight}  {...dg_prop} />
+            <DataGrid  {...this.props} scrollPos={scrollPos} setDataHeight={setDataHeight} />
             <div className="react-grid scrollbar"
                 style={{ display: scrollbarVisible ? 'block' : 'none' }}
                 ref={x => this.scrollbar = x}>

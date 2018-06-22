@@ -163,7 +163,7 @@ class DataGrid extends React.Component {
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
 
-        const totalWidth = head.map((c,i)=>c.width + columnResize[i]).reduce((a,b)=>a+b, 0)
+        const totalWidth = head.map((c,i)=>c.width + columnResize[i]).reduce((a,b)=>a+b, 2)
 
         return <div className="react-grid horizontalscroll">
             <div className="react-grid grid-container">
