@@ -163,26 +163,23 @@ class DataGrid extends React.Component {
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 
 
-        const totalWidth = head.map((c,i)=>c.width + columnResize[i]).reduce((a,b)=>a+b, 2)
+        const totalWidth = head.map((c, i) => c.width + columnResize[i]).reduce((a, b) => a + b, 2)
 
-        return <div className="react-grid horizontalscroll">
-            <div className="react-grid grid-container">
+        return <div className="react-grid grid-container">
+            <div
+                className="react-grid head-row"
+                style={{ maxHeight: rowHeight + 'px' }}>
+                {head.map(map_head_top)}
+            </div>
+            <div className="react-grid data-container" style={{ minWidth: totalWidth }}>
                 <div
-                    className="react-grid head-row"
-                    style={{ maxHeight: rowHeight + 'px' }}>
-                    {head.map(map_head_top)}
-                </div>
-                <div className="react-grid data-container" style={{minWidth: totalWidth}}>
-                    <div
-                        style={{ marginTop: (-scrollPos) + 'px' }}
-                        className="react-grid grid" >
-                        {head.map(map_head)}
-                    </div>
+                    style={{ marginTop: (-scrollPos) + 'px' }}
+                    className="react-grid grid" >
+                    {head.map(map_head)}
                 </div>
             </div>
             <img ref={x => this.invisible = x} src={invisible} />
         </div>
-
     }
 
     DataColumn(props) {

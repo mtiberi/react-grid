@@ -12,8 +12,7 @@ class DataGridWithScrollBar extends React.Component {
     }
 
     updateScroll() {
-        if (this.scrollPos === null)
-        {
+        if (this.scrollPos === null) {
             this.scrollPos = undefined
             return;
         }
@@ -33,7 +32,7 @@ class DataGridWithScrollBar extends React.Component {
         const scroll = e => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             if (this.scrollPos === undefined)
                 setTimeout(() => this.updateScroll(), 0)
 
@@ -73,9 +72,14 @@ class DataGridWithScrollBar extends React.Component {
         const scrollbarVisible = dataHeight >= height
 
         return <div className="react-grid outer-container" onWheel={wheel} style={{ width: pix(width), height: pix(height) }} >
-            <DataGrid  {...this.props} scrollPos={scrollPos} setDataHeight={setDataHeight} />
+            <div className="react-grid horizontalscrollbar" style={{
+                width: pix(scrollbarVisible ? width - 16 : width),
+                maxHeight: pix(height)
+            }} >
+                <DataGrid  {...this.props} scrollPos={scrollPos} setDataHeight={setDataHeight} />
+            </div>
             <div className="react-grid scrollbar"
-                style={{ display: scrollbarVisible ? 'block' : 'none' }}
+                style={{ display: scrollbarVisible ? 'block' : 'none', width: '16px' }}
                 ref={x => this.scrollbar = x}>
                 <div ref={refScrollElement} style={{ width: '1px', height: '1px' }} >
                 </div>
