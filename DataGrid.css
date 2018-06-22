@@ -41,10 +41,7 @@
 .react-grid.grid {
     display: flex;
     flex-direction: row;
-    border: 1px solid rgba(0, 0, 0, .4);
     height: 200px;
-    border-collapse: separate;
-    border-bottom: 1px solid rgba(0, 0, 0, .2);
     padding: 0px;
     margin: 0px;
     font-family: sans-serif;
@@ -52,8 +49,6 @@
 
 .react-grid.head-row {
     position: absolute;
-    border-top: 1px solid white;
-    border-left: 1px solid rgba(0, 0, 0, .2);
     display: flex;
     flex-direction: row;
 }

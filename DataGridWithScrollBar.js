@@ -70,16 +70,17 @@ class DataGridWithScrollBar extends React.Component {
         const pix = x => x + 'px'
 
         const scrollbarVisible = dataHeight >= height
+        const sbWidth = scrollbarVisible ? 16 : 0
 
         return <div className="react-grid outer-container" onWheel={wheel} style={{ width: pix(width), height: pix(height) }} >
             <div className="react-grid horizontalscroll" style={{
-                width: pix(scrollbarVisible ? width - 16 : width),
+                width: pix(width - sbWidth),
                 maxHeight: pix(height)
             }} >
                 <DataGrid  {...this.props} scrollPos={scrollPos} setDataHeight={setDataHeight} />
             </div>
             <div className="react-grid scrollbar"
-                style={{ display: scrollbarVisible ? 'block' : 'none', width: '16px' }}
+                style={{ display: scrollbarVisible ? 'block' : 'none', width: pix(sbWidth) }}
                 ref={x => this.scrollbar = x}>
                 <div ref={refScrollElement} style={{ width: '1px', height: '1px' }} >
                 </div>
