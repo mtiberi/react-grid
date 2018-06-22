@@ -58,10 +58,13 @@ class DataGridResizeable extends React.Component {
 
 
     render() {
+        const focus = event => console.log('focus!');
+        const keyPress = event => console.log('keyPress!', this.state.height);
+
         const { width = 100, height = 100 } = this.state
         const ref = element => { this.element = element; this.onResize() }
 
-        return <div ref={ref} className='resizeable'>
+        return <div ref={ref} className='resizeable' tabIndex="0" onFocus={focus} onKeyUp={keyPress}>
             <DataGridWithScrollBar {...this.props} width={width} height={height} />
         </div>
     }
