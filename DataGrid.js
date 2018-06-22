@@ -165,25 +165,24 @@ class DataGrid extends React.Component {
 
 
 
-        return <div className="react-grid top-container">
-            <div className="react-grid grid-container">
-                <div
-                    className="react-grid top"
-                    style={{ maxHeight: rowHeight + 'px' }}>
-                    {head.map(map_head_top)}
-                </div>
-                <div 
-                    className="react-grid data-container"
-                    style={{ height: (dataHeight) + 'px' }}>
-                    <div
-                        style={{ marginTop: (-scrollPos) + 'px', width: '100%' }}
-                        className="react-grid grid" >
-                        {head.map(map_head)}
-                    </div>
-                </div>
-                <img ref={x => this.invisible = x} src={invisible} />
+        return <div className="react-grid grid-container">
+            <div
+                className="react-grid head-row"
+                style={{ maxHeight: rowHeight + 'px' }}>
+                {head.map(map_head_top)}
             </div>
+            <div
+                className="react-grid data-container"
+                style={{ height: (dataHeight) + 'px' }}>
+                <div
+                    style={{ marginTop: (-scrollPos) + 'px', width: '100%' }}
+                    className="react-grid grid" >
+                    {head.map(map_head)}
+                </div>
+            </div>
+            <img ref={x => this.invisible = x} src={invisible} />
         </div>
+
     }
 
     DataColumn(props) {
