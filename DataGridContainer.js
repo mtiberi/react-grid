@@ -22,7 +22,7 @@ class DataGridContainer extends React.Component {
         if (this.scrollPos !== this.state.scrollPos)
             this.setState({ scrollPos: this.scrollPos })
         this.scrollPos = null
-        setTimeout(() => this.updateScroll(), 20)
+        setTimeout(() => this.updateScroll(), 10)
     }
 
     render() {
@@ -87,9 +87,8 @@ class DataGridContainer extends React.Component {
             const displayIndex = selection.displayIndex
             if (displayIndex >= 0) {
                 // ensure selection is visible
-                const delta = rowHeight - 1
-                const top = rowHeight * displayIndex - delta
-                const bottom = top + rowHeight + delta
+                const top = rowHeight * displayIndex + 1 - rowHeight
+                const bottom = top + 3*rowHeight - 1
                 const { scrollTop, scrollBottom } = getScrollWindow()
                 if (top < scrollTop)
                     setScrollPos(top)
