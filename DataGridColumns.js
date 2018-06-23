@@ -50,7 +50,7 @@ class DataGridColumns extends React.Component {
     render() {
         const {
             head = [],
-            setSelectedRowIndex,
+            setSelection,
             rowHeight,
             scrollPos,
             tabIndex,
@@ -69,9 +69,18 @@ class DataGridColumns extends React.Component {
         const setSort = (sortColumn, sortDescending) =>
             this.setState({ sortColumn, sortDescending })
 
-        const selectRow = (rowIndex) => {
-            if (setSelectedRowIndex)
-                setSelectedRowIndex(rowIndex)
+        const selectRow = (current) => {
+            if (setSelection) {
+                const mapIndex = sortMap.indexOf(current)
+                const prev = mapIndex > 0 ? sortMap[mapIndex - 1] : undefined
+                const next = mapIndex >= 0 ? sortMap[mapIndex + 1] : undefined
+                setSelection({ current, prev, next })
+            }
+        }
+
+        if (selectedRowIndex !== this.selectedRowIndex) {
+            this.selectedRowIndex = selectedRowIndex
+            selectRow(selectedRowIndex)
         }
 
         const selectColumn = colIndex => {

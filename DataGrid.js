@@ -66,15 +66,26 @@ class DataGrid extends React.Component {
         const {
             width = 100,
             height = 100,
+            selection = {},
             selectedRowIndex = -1,
             focused = false
         } = this.state
 
-        const setSelectedRowIndex = selectedRowIndex => this.setState({ selectedRowIndex })
+        const setSelection = selection => this.setState({ selection, selectedRowIndex: selection.current })
 
         const focus = event => this.setState({ focused: true });
         const blur = event => this.setState({ focused: false });
-        const keyDown = event => console.log('keyDown!', this.state.height);
+        const keyDown = event => {
+            if (focused) {
+                const key = event.key
+                if (key === 'ArrowUp' && selection.prev !== undefined) {
+                    this.setState({ selectedRowIndex: selection.prev })
+
+                } else if (key === 'ArrowDown' && selection.next !== undefined) {
+                    this.setState({ selectedRowIndex: selection.next })
+                }
+            }
+        }
 
         const ref = element => { this.element = element; this.onResize() }
 
@@ -88,7 +99,7 @@ class DataGrid extends React.Component {
                 width={width}
                 height={height}
                 focused={focused}
-                setSelectedRowIndex={setSelectedRowIndex}
+                setSelection={setSelection}
                 selectedRowIndex={selectedRowIndex} />
 
         </div>
