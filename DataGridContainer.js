@@ -5,10 +5,12 @@
 
 
 
-class DataGridWithScrollBar extends React.Component {
-    constructor() {
-        super(...arguments)
-        this.state = {}
+class DataGridContainer extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            selectedRowIndex: props.selectedRowIndex
+        }
     }
 
     updateScroll() {
@@ -25,7 +27,7 @@ class DataGridWithScrollBar extends React.Component {
 
     render() {
         const { width, height } = this.props
-        const { scrollPos = 0, dataHeight = 0 } = this.state || {}
+        const { scrollPos = 0, dataHeight = 0 } = this.state
 
         let scrollElement
 
@@ -75,7 +77,9 @@ class DataGridWithScrollBar extends React.Component {
                 width: pix(width - sbWidth),
                 maxHeight: pix(height)
             }} >
-                <DataGrid  {...this.props} scrollPos={scrollPos} setDataHeight={setDataHeight} />
+                <DataGridColumns  {...this.props}
+                    scrollPos={scrollPos}
+                    setDataHeight={setDataHeight} />
             </div>
             <div className="react-grid scrollbar"
                 style={{ display: scrollbarVisible ? 'block' : 'none', width: pix(sbWidth) }}
