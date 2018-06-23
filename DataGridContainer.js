@@ -26,10 +26,25 @@ class DataGridContainer extends React.Component {
     }
 
     render() {
-        const { width, height, setSelection } = this.props
+        const { width, height, setSelection, rowHeight } = this.props
         const { scrollPos = 0, dataHeight = 0 } = this.state
 
         let scrollElement
+
+        const setScrollPos = value => {
+            if (this.scrollbar) {
+                this.scrollbar.scrollTop = value
+            }
+        }
+
+        const getScrollWindow = () => {
+            if (this.scrollbar) {
+                const scrollTop = this.scrollbar.scrollTop
+                const scrollBottom = scrollTop + this.scrollbar.clientHeight
+                return { scrollTop, scrollBottom }
+            }
+            return { scrollTop: 0, scrollBotton: dataHeight }
+        }
 
         const scroll = e => {
             e.preventDefault();
@@ -60,11 +75,7 @@ class DataGridContainer extends React.Component {
 
         const wheel = event => {
             event.stopPropagation();
-            if (this.scrollbar) {
-                const deltaY = event.nativeEvent.deltaY
-                let scrollpos = this.scrollbar.scrollTop + deltaY
-                this.scrollbar.scrollTop = scrollpos
-            }
+            setScrollPos(this.scrollbar.scrollTop + event.nativeEvent.deltaY)
         }
 
         const pix = x => x + 'px'
@@ -72,13 +83,19 @@ class DataGridContainer extends React.Component {
         const scrollbarVisible = dataHeight >= height
         const sbWidth = scrollbarVisible ? 16 : 0
 
-        const checkVisible = displayIndex => {
-            console.log('checkVisible', displayIndex)
-        }
-
         const previewSelection = selection => {
-            if (selection.displayIndex >= 0)
-                checkVisible(selection.displayIndex)
+            const displayIndex = selection.displayIndex
+            if (displayIndex >= 0) {
+                // ensure selection is visible
+                const delta = rowHeight - 1
+                const top = rowHeight * displayIndex - delta
+                const bottom = top + rowHeight + delta
+                const { scrollTop, scrollBottom } = getScrollWindow()
+                if (top < scrollTop)
+                    setScrollPos(top)
+                else if (bottom > scrollBottom)
+                    setScrollPos(scrollTop + bottom - scrollBottom)
+            }
             setSelection(selection)
         }
 
