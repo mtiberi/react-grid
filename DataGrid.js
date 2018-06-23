@@ -5,10 +5,15 @@
 
 
 
-class DataGridResizeable extends React.Component {
+class DataGrid extends React.Component {
     constructor(props) {
         super(...arguments)
-        this.state = { width: props.width, height: props.height, selectedRowIndex: -1 }
+        this.state = {
+            width: props.width,
+            height: props.height,
+            selectedRowIndex: -1,
+            focused: false,
+        }
         this.onResize = this.onResize.bind(this)
     }
 
@@ -58,19 +63,31 @@ class DataGridResizeable extends React.Component {
 
 
     render() {
+        const {
+            width = 100,
+            height = 100,
+            selectedRowIndex = -1,
+            focused = false
+        } = this.state
+
         const setSelectedRowIndex = selectedRowIndex => this.setState({ selectedRowIndex })
-        const { selectedRowIndex } = this.state
 
-        const focus = event => console.log('focus!');
-        const keyPress = event => console.log('keyPress!', this.state.height);
+        const focus = event => this.setState({ focused: true });
+        const blur = event => this.setState({ focused: false });
+        const keyDown = event => console.log('keyDown!', this.state.height);
 
-        const { width = 100, height = 100 } = this.state
         const ref = element => { this.element = element; this.onResize() }
 
-        return <div ref={ref} className='resizeable' tabIndex="0" onFocus={focus} onKeyUp={keyPress}>
+        return <div ref={ref}
+            className="react-grid resizeable"
+            tabIndex="0"
+            onFocus={focus}
+            onBlur={blur}
+            onKeyDown={keyDown}>
             <DataGridContainer {...this.props}
                 width={width}
                 height={height}
+                focused={focused}
                 setSelectedRowIndex={setSelectedRowIndex}
                 selectedRowIndex={selectedRowIndex} />
 

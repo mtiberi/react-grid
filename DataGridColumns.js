@@ -55,6 +55,7 @@ class DataGridColumns extends React.Component {
             scrollPos,
             tabIndex,
             selectedRowIndex = 0,
+            focused = false,
         } = this.props
 
         const {
@@ -132,6 +133,7 @@ class DataGridColumns extends React.Component {
                 rowHeight,
                 sortColumn,
                 sortDescending,
+                focused,
                 selectedRowIndex,
                 headRowVisibility: 'hidden',
 
@@ -151,6 +153,7 @@ class DataGridColumns extends React.Component {
                 rowHeight,
                 sortColumn,
                 sortDescending,
+                focused,
 
                 selectColumn,
                 startDrag,
@@ -194,6 +197,7 @@ class DataGridColumns extends React.Component {
             selectedRowIndex,
             headRowVisibility,
             invisibleImage,
+            focused,
 
             selectColumn,
             selectRow,
@@ -223,6 +227,7 @@ class DataGridColumns extends React.Component {
         }
 
         const pix = x => x + 'px'
+        const maybeFocused = focused ? " focused" : ""
 
         const renderValue = value => {
 
@@ -233,7 +238,7 @@ class DataGridColumns extends React.Component {
                 : ""
 
             return <div
-                className={"react-grid cell" + maybeSelected}
+                className={"react-grid cell" + maybeSelected + maybeFocused}
                 style={{ height: pix(rowHeight) }}
                 key={rowIndex}
                 onClick={clickRow(rowIndex)}
@@ -247,8 +252,10 @@ class DataGridColumns extends React.Component {
                 ? sortDescending ? ' arrow-up' : ' arrow-down'
                 : null
 
+
         const renderHead = (text, colIndex) =>
-            <div className="react-grid head" style={{ visibility: headRowVisibility, height: pix(rowHeight) }} >
+            <div className={"react-grid head" + maybeFocused}
+                style={{ visibility: headRowVisibility, height: pix(rowHeight) }} >
                 <div
                     className="react-grid head-cell"
                     onClick={clickColumn(colIndex)} >

@@ -33,6 +33,8 @@
     font-size: 10pt;
 }
 
+
+
 .react-grid.data-container {
     overflow: hidden;
 }
@@ -54,7 +56,7 @@
 }
 
 .react-grid.column {
-    background-color: white;
+    background-color: black;
     display: flex;
     flex-direction: column;
 }
@@ -67,6 +69,10 @@
     display: flex;
     flex-direction: row;
     padding: 0px;
+}
+
+.react-grid.head:not(.focused) {
+    background-color: #c0c0c0;
 }
 
 .react-grid.head-text {
@@ -103,21 +109,30 @@
 }
 
 .react-grid.cell.selected {
-    background-color: #ccf;
+    background-color: rgba(192, 192, 255, .94);
 }
 
-.react-grid.cell.selected:nth-child(odd):not(.selected) {
-    background-color: white;
+.react-grid.cell.selected.focused {
+    background-color: rgba(192, 192, 255, 0.96);
+}
+
+.react-grid.cell:nth-child(odd):not(.selected) {
+    background-color: rgba(255,255,255,0.94)
 }
 
 .react-grid.cell:nth-child(even):not(.selected) {
-    background-color: #e9e9ff
+    background-color: rgba(233,233,255,0.94)
 }
 
-.react-grid.shadow {
-    box-shadow: 2px 2px grey;
-    z-index: 2;
- }
+.react-grid.cell.focused:nth-child(odd):not(.selected) {
+    background-color: rgba(255,255,255,0.96)
+}
+
+.react-grid.cell.focused:nth-child(even):not(.selected) {
+    background-color: rgba(233,233,255,0.96)
+}
+
+
 
 /* https://css-tricks.com/snippets/css/css-triangle/ */
 
@@ -142,13 +157,11 @@
     margin: auto;
  }
 
- .react-grid.invisible {
-    visibility: none;
-}
-
-div.resizeable {
+.react-grid.resizeable {
     overflow: hidden;
     border: 0px;
     padding: 0px;
     margin:0px;
 }
+
+
