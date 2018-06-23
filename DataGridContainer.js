@@ -26,7 +26,7 @@ class DataGridContainer extends React.Component {
     }
 
     render() {
-        const { width, height } = this.props
+        const { width, height, setSelection } = this.props
         const { scrollPos = 0, dataHeight = 0 } = this.state
 
         let scrollElement
@@ -72,6 +72,16 @@ class DataGridContainer extends React.Component {
         const scrollbarVisible = dataHeight >= height
         const sbWidth = scrollbarVisible ? 16 : 0
 
+        const checkVisible = displayIndex => {
+            console.log('checkVisible', displayIndex)
+        }
+
+        const previewSelection = selection => {
+            if (selection.displayIndex >= 0)
+                checkVisible(selection.displayIndex)
+            setSelection(selection)
+        }
+
         return <div className="react-grid outer-container" onWheel={wheel} style={{ width: pix(width), height: pix(height) }} >
             <div className="react-grid horizontalscroll" style={{
                 width: pix(width - sbWidth),
@@ -79,7 +89,8 @@ class DataGridContainer extends React.Component {
             }} >
                 <DataGridColumns  {...this.props}
                     scrollPos={scrollPos}
-                    setDataHeight={setDataHeight} />
+                    setDataHeight={setDataHeight}
+                    setSelection={previewSelection} />
             </div>
             <div className="react-grid scrollbar"
                 style={{ display: scrollbarVisible ? 'block' : 'none', width: pix(sbWidth) }}

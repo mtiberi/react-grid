@@ -71,10 +71,10 @@ class DataGridColumns extends React.Component {
 
         const selectRow = (current) => {
             if (setSelection) {
-                const mapIndex = sortMap.indexOf(current)
-                const prev = mapIndex > 0 ? sortMap[mapIndex - 1] : undefined
-                const next = mapIndex >= 0 ? sortMap[mapIndex + 1] : undefined
-                setSelection({ current, prev, next })
+                const displayIndex = sortMap.indexOf(current)
+                const prev = displayIndex > 0 ? sortMap[displayIndex - 1] : undefined
+                const next = displayIndex >= 0 ? sortMap[displayIndex + 1] : undefined
+                setSelection({ current, displayIndex, prev, next })
             }
         }
 
